@@ -1,0 +1,26 @@
+project:
+  type: website
+
+website:
+  title: "Taylor Crockett"
+  navbar:
+    left:
+      - href: index.qmd
+        text: "Home"
+      - text: "Research"
+        menu:
+        - href: https://twcrockett.github.io/SpaceSilkRoad_v2021.pdf
+          text: "Space Silk Road (2021)"
+      - text: "Projects"
+        menu:
+        - href: https://twcrockett.github.io/TXelection_4317
+        - text: "2022 Texas Gubernatorial Election"
+
+format:
+  html:
+    theme: simplex
+    css: styles.css
+    toc: true
+
+editor: visual
+

@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "This website was created with Quarto using RStudio."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Taylor Crockett",
+    "section": "",
+    "text": "Interests\n\nData science\nPolicy\n\n\n\nContact me\ntaylorcrockett@utdallas.edu"
+  },
+  {
+    "objectID": "ssr.html",
+    "href": "ssr.html",
+    "title": "Space Silk Road",
+    "section": "",
+    "text": "1 + 1\n\n[1] 2"
+  }
+]
