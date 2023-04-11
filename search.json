@@ -1,0 +1,65 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Taylor Crockett",
+    "section": "",
+    "text": "This is the website of Taylor Crockett, to demonstrate research and projects. You can find my CV on the top menu bar.\nI am an undergraduate student at the University of Texas at Dallas (B.S. International Political Economy, grad. May 2023) and fast-tracked graduate student (M.S. Social Data Analytics and Research).\n\n\n\nResearch\n\nDeveloping space powers\nMost current research involves work about “developing space powers” (DSPs), or countries with burgeoning space programs, and how and where their development places them in regard to the space economy and international relations. This research is pending later publication.\n\n\nSpace Silk Road\nPrevious research on this topic focused on the battle of influence between China and the US: how declining US interest, especially during the Trump presidency, led smaller satellite-operating countries to seek Chinese resources under the umbrella of the Belt and Road Initiative. The paper, as was presented at the WPSA and SPSA conferences in 2022, can be found here.\n\n\n\nInterests\n\nData science\nInternational relations\nInternational political economy\nMapping and environmental research\nPolicy\n\nSpace policy\nUrban planning/policy\nEnvironmental policy\n\n\n\n\nContact me"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "This website was created with Quarto using RStudio."
+  },
+  {
+    "objectID": "Assignment02.html",
+    "href": "Assignment02.html",
+    "title": "Simple ggplot exercise",
+    "section": "",
+    "text": "Figure 1 is a brief comparison of Tsai Ing-Wen voters and non-voters on their sentiments about Taiwanese independence.\n\n\nCode\nlibrary(haven)\nlibrary(ggplot2)\nlibrary(devtools)\nlibrary(dplyr)\n\nTEDS_2016 <- read_stata(\"https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true\")\n\nTondulab <- \"Position on unification and independence\"\n\nTEDS_2016$Tondu <- factor(TEDS_2016$Tondu, levels=c(1,2,3,4,5,6,9), \n                          labels=c(\"Unification now\", \n                                   \"Status quo, unif. in future\", \n                                   \"Status quo, decide later\", \n                                   \"Status quo forever\", \n                                   \"Status quo, indep. in future\", \n                                   \"Independence now\", \n                                   \"No response\"))\n\nTEDS_Tsai <- filter(TEDS_2016, votetsai==1)\nTEDS_noTsai <- filter(TEDS_2016, votetsai==0)\nTEDS_NATsai <- filter(TEDS_2016, is.na(votetsai))\n\n\nggplot(data=TEDS_2016, aes(x=x)) +\n  geom_bar(data=TEDS_Tsai, aes(x = Tondu), \n                 fill=\"#00A36C\") +\n  geom_bar(data=TEDS_noTsai, aes(x = Tondu), \n                 fill= \"#404080\") +\n  geom_bar(data=TEDS_NATsai, aes(x = Tondu), \n                 fill= \"#808080\") +\n  xlab(Tondulab) + ylab(\"Count\") + \n  theme(axis.text.x=element_text(angle=30,hjust=1) )\n\n\n\n\n\nFigure 1: Position on Taiwanese independence respective of Tsai vote."
+  },
+  {
+    "objectID": "Assignment03.html",
+    "href": "Assignment03.html",
+    "title": "Taiwanese independence sentiments in 2016: boxplot and PCA",
+    "section": "",
+    "text": "The original assignment consisted of a regression nomogram of Taiwanese independence sentiments in 2016, referred to as Tondu, against named variables. I chose to remove non-respondents, which can be optionally reinstated in the code below."
+  },
+  {
+    "objectID": "Assignment03.html#boxplot",
+    "href": "Assignment03.html#boxplot",
+    "title": "Taiwanese independence sentiments in 2016: boxplot and PCA",
+    "section": "Boxplot",
+    "text": "Boxplot\nSince this method was assigned to the students to realize it was flawed from the start, I decided to create a grouped boxplot, Figure 1, to visualize the same data. I scaled age, education, and income levels to the same metric, \\(n\\), to reflect their rough distribution across different poll answers.\n\n\nCode\n# library(regplot)\nlibrary(reshape2)\nlibrary(tidyverse)\nlibrary(tidymodels)\nlibrary(plotly)\nlibrary(haven)\n\nTEDS_2016 <- read_stata(\"https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true\")\n\n# opt. remove non-responses before relabelling\nTEDS_2016 <- filter(TEDS_2016, Tondu < 8)\n\nTEDS_2016$Tondu <- factor(TEDS_2016$Tondu, levels=c(1,2,3,4,5,6,9), \n                          labels=c(\"Unification now\", \n                                   \"Status quo, unif. in future\", \n                                   \"Status quo, decide later\", \n                                   \"Status quo forever\", \n                                   \"Status quo, indep. in future\", \n                                   \"Independence now\", \n                                   \"No response\"))\n\n\nnewvars <- c(\"Tondu\", \"female\", \"DPP\", \"age\", \"income\", \"edu\", \"Taiwanese\", \"Econ_worse\")\nTEDS_subs <- TEDS_2016[complete.cases(TEDS_2016[ , newvars]), ]\n\n\n# lm.fit=lm(Tondu~age+edu+income, data=TEDS_subs)\n# summary(lm.fit)\n# regplot(lm.fit)\n\n# thank you plotly for teaching me\n#  -- learning how to use '%>%' from dplyr here\n# ditching the linear regression per the assignment\n# i think a boxplot model is much prettier for Tondu data\n# leaving linnmodel here for posterity's sake\n# _____________________________________________\n# lm_model1 <- linear_reg() %>% \n#   set_engine('lm') %>% \n#   set_mode('regression') %>%\n#   fit(Tondu ~ age, data = TEDS_subs) \n# \n# y <- TEDS_subs$Tondu\n# x1 <-TEDS_subs$age\n# \n# x1_range <- seq(min(x1), max(x1), length.out = 100)\n# x1_range <- matrix(x1_range, nrow=100, ncol=1)\n# x1df <- data.frame(x1_range)\n# colnames(x1df) <- c('age')\n# \n# y1df <- lm_model1 %>% predict(x1df)\n# \n# colnames(y1df) <- c('Tondu')\n# xy1 <- data.frame(x1df, y1df) \n# \n# fig <- plot_ly(TEDS_subs, x = ~Tondu, y = ~age, type = 'scatter', alpha = 0.65, mode = 'markers', name = 'Age')\n# fig <- fig %>% add_trace(data = xy1, x = ~Tondu, y = ~age, name = 'Regression Fit', mode = 'lines', alpha = 1)\n# fig\n\n# Now we look at grouped boxplots\n# ________________________________\n\n# fig <- plot_ly(TEDS_subs, x = ~Tondu, y = ~age, type = \"box\")\n# fig\n\n# At this point I realized that displaying Tondu against different variables \n# wouldn't work because the y-axes would be different (possible but clunky)\n\n# Going to scale age, income, edu on same scale from 0, 10\n# If necessary using maximum absolute method (x/max(x))\n\nTEDS_subs['age'] <- apply(TEDS_subs['age'], 2, function(x) 10*x/max(x))\nTEDS_subs['edu'] <- apply(TEDS_subs['edu'], 2, function(x) 2*x)\n\n# I found no other way to go about this but to jankily\n# rip apart my existing df, pull \"age\" \"edu\" and \"income\"\n# individually, then force it all back together in a\n# single long-form\n\nTEDS_age <- TEDS_subs[c('age', 'Tondu')]\nTEDS_age <- TEDS_age %>% rename(\"n\" = \"age\") %>% mutate(type=\"Age\")\n\nTEDS_edu <- TEDS_subs[c('edu', 'Tondu')]\nTEDS_edu <- TEDS_edu %>% rename(\"n\" = \"edu\") %>% mutate(type=\"Education\")\n\nTEDS_income <- TEDS_subs[c('income', 'Tondu')]\nTEDS_income <- TEDS_income %>% rename(\"n\" = \"income\") %>% mutate(type=\"Income\")\n\nTEDS_plot <- rbind(TEDS_age, TEDS_edu, TEDS_income)\n\nfig <- plot_ly(TEDS_plot, x = ~Tondu, y = ~n, color = ~type, type = \"box\")\nfig <- fig %>% layout(boxmode = \"group\")\nfig\n\n\n\n\n\nFigure 1: Tondu boxplot"
+  },
+  {
+    "objectID": "Assignment03.html#d-visualization-of-data",
+    "href": "Assignment03.html#d-visualization-of-data",
+    "title": "Taiwanese independence sentiments in 2016: boxplot and PCA",
+    "section": "3D visualization of data",
+    "text": "3D visualization of data\nObviously, age, income level and education level are intricately related. Comparing them on one shared axis is inconclusive. A further analysis involving principal component analysis would give a much clearer picture on how each variable independently relates to the Tondu answers. Figure 2 is a 3D plot showing the responses we are observing.\n\n\nCode\nTEDS_2016 <- read_stata(\"https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true\")\n\n# opt. remove non-responses before relabelling\nTEDS_2016 <- filter(TEDS_2016, Tondu < 8)\n\nTEDS_2016$Tondu <- factor(TEDS_2016$Tondu, levels=c(1,2,3,4,5,6,9), \n                          labels=c(\"Unification now\", \n                                   \"Status quo, unif. in future\", \n                                   \"Status quo, decide later\", \n                                   \"Status quo forever\", \n                                   \"Status quo, indep. in future\", \n                                   \"Independence now\", \n                                   \"No response\"))\n\n\nnewvars <- c(\"Tondu\", \"female\", \"DPP\", \"age\", \"income\", \"edu\", \"Taiwanese\", \"Econ_worse\")\nTEDS_subs <- TEDS_2016[complete.cases(TEDS_2016[ , newvars]), ]\n\nfig <- plot_ly(TEDS_subs, x = ~age, y = ~income, z = ~edu, color = ~Tondu) %>%\n  add_markers(size = 12)\nfig\n\n\n\n\n\nFigure 2: Tondu 3D"
+  },
+  {
+    "objectID": "Assignment03.html#pca",
+    "href": "Assignment03.html#pca",
+    "title": "Taiwanese independence sentiments in 2016: boxplot and PCA",
+    "section": "PCA",
+    "text": "PCA\nTo accomplish the PCA, I assigned Tondu answers on their own scale, \\(t\\), where \\(t=1\\) indicates strong reunification sentiment and \\(t=5\\) indicates strong independence sentiment. Note that while these two ideas are opposed, further analysis should consider \\(t=3\\) “pro-status quo” to be strong and oppositional in its own right.\nBelow is a principal component analysis on age, education and income.\n\n\nCode\nlibrary(naivebayes)\nlibrary(plotly)\nlibrary(dplyr)\nlibrary(psych)\nlibrary(tidyverse)\nlibrary(factoextra)\nlibrary(RColorBrewer)\n\nTEDS_2016 <- read_stata(\"https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true\")\n\n# opt. remove non-responses before relabelling\nTEDS_2016 <- filter(TEDS_2016, Tondu < 8)\n\nnewvars <- c(\"Tondu\", \"female\", \"DPP\", \"age\", \"income\", \"edu\", \"Taiwanese\", \"Econ_worse\")\nTEDS_subs <- TEDS_2016[complete.cases(TEDS_2016[ , newvars]), ]\n\nTEDS_PCA <- TEDS_subs[c(\"Tondu\", \"age\", \"edu\", \"income\")]\nTEDS_PCA$Tondu <- ifelse(TEDS_PCA$Tondu > 3,\n                  TEDS_PCA$Tondu-1,\n                  TEDS_PCA$Tondu)\n\npr.mas=prcomp(TEDS_PCA, scale=TRUE)\n\nfviz_pca_biplot(pr.mas, label=\"var\", col.var=\"firebrick1\")\n\n\n\n\n\nTondu PCA"
+  },
+  {
+    "objectID": "Assignment03.html#further-exploration-of-data",
+    "href": "Assignment03.html#further-exploration-of-data",
+    "title": "Taiwanese independence sentiments in 2016: boxplot and PCA",
+    "section": "Further exploration of data",
+    "text": "Further exploration of data\nI thought about visualizing a 3-dimensional PCA to see if categorization without factoring in Tondu arose, but found that relying on only 3 variables (age, education, income) made increasing components unnecessary: the total explained variance was already plenty high and the resulting visualization was just a slop. Technically addressing more parts of the Tondu polling data was outside the scope of the initial assignment, but perhaps I’ll readdress it with more variables another time, as well as reintroducing Tondu into the PCA on its 1:5 scale. That’s all for now.\n– 8 Mar"
+  },
+  {
+    "objectID": "contact.html",
+    "href": "contact.html",
+    "title": "Taylor Crockett",
+    "section": "",
+    "text": "Academic purposes:\ntaylorcrockett@utdallas.edu\nOther inquiries:\ntwc.rocket@gmail.com\n\n\n\n\n\n\n\n\n\nTwitter status (subject to change):\n\n\nI’m officially leaving Twitter. i spend entirely too much time on here. Take care everyone. I’ll be back in 15 minutes.\n\n— liddy ☆ 🎪 (@pr1ncette) August 25, 2020"
+  }
+]
