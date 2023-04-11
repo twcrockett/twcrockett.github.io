@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Taylor Crockett",
     "section": "",
-    "text": "Welcome to my website!\nI am an undergraduate student at the University of Texas at Dallas (B.S. International Political Economy, grad. May 2023) and fast-tracked graduate student (M.S. Social Data Analytics and Research).\n\nResearch\n\nDeveloping space powers\nMost current research involves work about “developing space powers” (DSPs), or countries with burgeoning space programs, and how and where their development places them in regard to the space economy and international relations. This research is pending later publication.\n\n\nSpace Silk Road\nPrevious research on this topic focused on the battle of influence between China and the US: how declining US interest, especially during the Trump presidency, led smaller satellite-operating countries to seek Chinese resources under the umbrella of the Belt and Road Initiative. This paper as presented at the WPSA and SPSA conferences in 2022 can be found here.\n\n\n\nInterests\n\nData science\nInternational relations\nInternational political economy\nMapping and environmental research\nPolicy\n\nSpace policy\nUrban planning/policy\nEnvironmental policy\n\n\n\n\nContact me\nAcademic purposes: taylorcrockett@utdallas.edu\nElse: twc.rocket@gmail.com"
+    "text": "This is the website of Taylor Crockett, to demonstrate research and projects. You can find my CV on the top menu bar.\nI am an undergraduate student at the University of Texas at Dallas (B.S. International Political Economy, grad. May 2023) and fast-tracked graduate student (M.S. Social Data Analytics and Research).\n\n\n\nResearch\n\nDeveloping space powers\nMost current research involves work about “developing space powers” (DSPs), or countries with burgeoning space programs, and how and where their development places them in regard to the space economy and international relations. This research is pending later publication.\n\n\nSpace Silk Road\nPrevious research on this topic focused on the battle of influence between China and the US: how declining US interest, especially during the Trump presidency, led smaller satellite-operating countries to seek Chinese resources under the umbrella of the Belt and Road Initiative. The paper, as was presented at the WPSA and SPSA conferences in 2022, can be found here.\n\n\n\nInterests\n\nData science\nInternational relations\nInternational political economy\nMapping and environmental research\nPolicy\n\nSpace policy\nUrban planning/policy\nEnvironmental policy\n\n\n\n\nContact me"
   },
   {
     "objectID": "about.html",
@@ -54,5 +54,12 @@
     "title": "Taiwanese independence sentiments in 2016: boxplot and PCA",
     "section": "Further exploration of data",
     "text": "Further exploration of data\nI thought about visualizing a 3-dimensional PCA to see if categorization without factoring in Tondu arose, but found that relying on only 3 variables (age, education, income) made increasing components unnecessary: the total explained variance was already plenty high and the resulting visualization was just a slop. Technically addressing more parts of the Tondu polling data was outside the scope of the initial assignment, but perhaps I’ll readdress it with more variables another time, as well as reintroducing Tondu into the PCA on its 1:5 scale. That’s all for now.\n– 8 Mar"
+  },
+  {
+    "objectID": "contact.html",
+    "href": "contact.html",
+    "title": "Taylor Crockett",
+    "section": "",
+    "text": "Academic purposes:\ntaylorcrockett@utdallas.edu\nOther inquiries:\ntwc.rocket@gmail.com\n\n\n\n\n\n\n\n\n\nTwitter status (subject to change):\n\n\nI’m officially leaving Twitter. i spend entirely too much time on here. Take care everyone. I’ll be back in 15 minutes.\n\n— liddy ☆ 🎪 (@pr1ncette) August 25, 2020"
   }
 ]
