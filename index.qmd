@@ -1,7 +1,7 @@
 <div>
 
 ::: {style="float: left; position: relative; top: 0px; padding-right: 15px; width: 200px; height: 200px;"}
-![](headshot_cropped.png){fig-alt="Taylor Crockett"}
+![](images/headshot_cropped.png){fig-alt="Taylor Crockett"}
 :::
 
 ::: {style="padding-top: 15px; padding-bottom: 15px;"}

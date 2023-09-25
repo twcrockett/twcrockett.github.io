@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Taylor Crockett">
+<meta name="dcterms.date" content="2023-09-22">
+
+<title>Taylor Crockett - How I clustered space program data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.1/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.1/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Taylor Crockett</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-research" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Research</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-research">    
+        <li>
+    <a class="dropdown-item" href="./SpaceSilkRoad.html" rel="" target="">
+ <span class="dropdown-text">Space Silk Road (2021)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./space_program_clustering.html" rel="" target="">
+ <span class="dropdown-text">How I clustered space program data</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Projects</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
+        <li>
+    <a class="dropdown-item" href="https://twcrockett.github.io/TXelection_4317" rel="" target="">
+ <span class="dropdown-text">2022 Texas Gubernatorial Election (2022)—broken right now 😢</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./LunarPhases.html" rel="" target="">
+ <span class="dropdown-text">Lunar Phases and Fatal Crashes</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-expanded-classwork" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Expanded classwork</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-expanded-classwork">    
+        <li>
+    <a class="dropdown-item" href="./EnvironmentalRacismGreenSpace.html" rel="" target="">
+ <span class="dropdown-text">Environmental Racism and Green Space (2022)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Assignment02.html" rel="" target="">
+ <span class="dropdown-text">Taiwanese independence sentiments: bar chart</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Assignment03.html" rel="" target="">
+ <span class="dropdown-text">Taiwanese independence sentiments: boxplot and PCA</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./CV.html" rel="" target="">
+ <span class="menu-text">CV</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a>
+  <ul>
+  <li><a href="#importing-packages" id="toc-importing-packages" class="nav-link" data-scroll-target="#importing-packages">Importing packages</a></li>
+  </ul></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
+  <ul>
+  <li><a href="#importing-from-.xlsx" id="toc-importing-from-.xlsx" class="nav-link" data-scroll-target="#importing-from-.xlsx">Importing from .xlsx</a></li>
+  </ul></li>
+  <li><a href="#preprocessing" id="toc-preprocessing" class="nav-link" data-scroll-target="#preprocessing">Preprocessing</a>
+  <ul>
+  <li><a href="#multicollinearity-and-feature-importance" id="toc-multicollinearity-and-feature-importance" class="nav-link" data-scroll-target="#multicollinearity-and-feature-importance">Multicollinearity and feature importance</a>
+  <ul class="collapse">
+  <li><a href="#standardize-and-normalize" id="toc-standardize-and-normalize" class="nav-link" data-scroll-target="#standardize-and-normalize">Standardize and normalize</a></li>
+  <li><a href="#find-multicollinearity" id="toc-find-multicollinearity" class="nav-link" data-scroll-target="#find-multicollinearity">Find multicollinearity</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#principal-component-analysis" id="toc-principal-component-analysis" class="nav-link" data-scroll-target="#principal-component-analysis">Principal component analysis</a></li>
+  <li><a href="#clustering" id="toc-clustering" class="nav-link" data-scroll-target="#clustering">Clustering</a>
+  <ul>
+  <li><a href="#k-means-clustering" id="toc-k-means-clustering" class="nav-link" data-scroll-target="#k-means-clustering"><span class="math inline">\(k\)</span>-means clustering</a></li>
+  <li><a href="#hierarchical-clustering" id="toc-hierarchical-clustering" class="nav-link" data-scroll-target="#hierarchical-clustering">Hierarchical clustering</a>
+  <ul class="collapse">
+  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">Discussion</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">How I clustered space program data</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Taylor Crockett </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 22, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This is a short walkthrough of how I created clustering methods for space program analysis, to group space programs by size and scope for later discussion about the larger space ecosystem. The initial analysis Cari and I did was limited to a single dataset of active satellites as administered <a href="https://www.ucsusa.org/resources/satellite-database" title="UCS Satellite Database">here</a> by the Union of Concerned Scientists, and supporting budget and GDP data from other sources. This work has already expanded in size and scope, but it’s fun to look back at where we started!</p>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<section id="importing-packages" class="level3">
+<h3 class="anchored" data-anchor-id="importing-packages">Importing packages</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># this is a powerful library that streamlines the data process</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) <span class="co"># lets us read an Excel file</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest) <span class="co"># one possible way to do prediction models</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra) <span class="co"># clustering models</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly) <span class="co"># interactive graphics using JavaScript</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<section id="importing-from-.xlsx" class="level3">
+<h3 class="anchored" data-anchor-id="importing-from-.xlsx">Importing from .xlsx</h3>
+<p>We already have a super-fantastic spreadsheet to pull from where we’ve stored our collected data. Let’s import it and stick with four main variables:</p>
+<ul>
+<li><p><strong>budget_capita_usd:</strong> The amount of space budget, in dollars, per person.</p></li>
+<li><p><strong>active_sats:</strong> The current number of satellites a country is operating or contracting in orbit today.</p></li>
+<li><p><strong>interactions:</strong> This took a bit of behind-the-scenes calculation in Python. It’s the amount of “interaction instances,” or every single cooperation a country had with another country across all active satellites.</p></li>
+<li><p><strong>interactivity:</strong> The amount of interactions per active satellite, or a way to measure how likely a country is to cooperate with others instead of go solo.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>import <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"C:/Users/twcro/Documents/GitHub/SpaceSilkRoad/agency_budgets_old.xlsx"</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">.name_repair =</span> janitor<span class="sc">::</span>make_clean_names,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">col_types =</span> <span class="fu">c</span>(<span class="st">"skip"</span>, <span class="co"># Organization</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"text"</span>, <span class="co"># Country</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># ISO_A3</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"text"</span>, <span class="co"># Region</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># Annual Budget, self-est.</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># EuroConsult est., military+civil (2021)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># Space in Africa est. (2020)</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># GDP</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># GDP/capita</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"numeric"</span>, <span class="co"># Budget/GDP %</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"numeric"</span>, <span class="co"># Budget/capita (USD)</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># Year of data</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"numeric"</span>, <span class="co"># Active sats.</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"numeric"</span>, <span class="co"># Interactions</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># Soviet former</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># ESA member</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># Arabsat investor</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span>, <span class="co"># Source(s)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"skip"</span> <span class="co"># Comments</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                               )</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>                 ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  remove_rownames <span class="sc">%&gt;%</span> </span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var=</span><span class="st">"country"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># This is where I calculate "interactivity", or the amount of interactions</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># per active satellites.</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">interactivity =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>      active_sats <span class="sc">!=</span> <span class="dv">0</span> <span class="sc">~</span> interactions <span class="sc">/</span> active_sats, </span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># I'm removing "region" for our modelling df because it's not going to be used </span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co"># in the numerical analysis</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> import <span class="sc">%&gt;%</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>region)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And here are the first few lines of what we’re dealing with!</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 22%">
+<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">budget_gdp_percent</th>
+<th style="text-align: right;">budget_capita_usd</th>
+<th style="text-align: right;">active_sats</th>
+<th style="text-align: right;">interactions</th>
+<th style="text-align: right;">interactivity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ALCE</td>
+<td style="text-align: left;">0.003%</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Algeria</td>
+<td style="text-align: left;">0.061%</td>
+<td style="text-align: right;">2.26</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">3.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Angola</td>
+<td style="text-align: left;">0.047%</td>
+<td style="text-align: right;">0.93</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Argentina</td>
+<td style="text-align: left;">0.025%</td>
+<td style="text-align: right;">2.66</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">49</td>
+<td style="text-align: right;">1.26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Australia</td>
+<td style="text-align: left;">0.021%</td>
+<td style="text-align: right;">12.61</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">2.07</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: left;">0.018%</td>
+<td style="text-align: right;">9.71</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The PCA later shows that budget as a percent of GDP has nearly no importance, so eventually I will remove it as a feature.
+</div>
+</div>
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</section>
+</section>
+<section id="preprocessing" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="preprocessing">Preprocessing</h2>
+<section id="multicollinearity-and-feature-importance" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="multicollinearity-and-feature-importance">Multicollinearity and feature importance</h3>
+<p>What is <u>multicollinearity</u>? It’s the idea that more than one of our variables correlate in a way that it’s hard to separate what influence comes from where.</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://www.theanalysisfactor.com/wp-content/uploads/2019/10/Multicollinearity-1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Visual description of multicollinearity</figcaption>
+</figure>
+</div>
+<p>For instance, if both “active satellites” and “budget” seem to make the same direction of change, how do we tell if the influence is coming from one over the other?</p>
+<p>What is <u>feature importance</u>? It’s the degree to which a single variable seems to influence the overall data. (The math behind it is related to predictive machine learning.)</p>
+<p>I’m measuring both of these to determine if our initial dataset is sound.</p>
+<section id="standardize-and-normalize" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="standardize-and-normalize">Standardize and normalize</h4>
+<p>Before I get to multicollinearity and feature importance, I need to examine the data structure. I’m going to scale the numeric variables from <span class="math inline">\((-1,1)\)</span> to put them on equal footing. Then, I’ll take a look at how the data is distributed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df.scale0 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">scale</span>(df))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df.scale0 <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Scaled from -1 to 1"</span>, <span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<caption>Scaled from -1 to 1</caption>
+<colgroup>
+<col style="width: 11%">
+<col style="width: 22%">
+<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">budget_gdp_percent</th>
+<th style="text-align: right;">budget_capita_usd</th>
+<th style="text-align: right;">active_sats</th>
+<th style="text-align: right;">interactions</th>
+<th style="text-align: right;">interactivity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ALCE</td>
+<td style="text-align: right;">-0.76</td>
+<td style="text-align: right;">-0.34</td>
+<td style="text-align: right;">-0.23</td>
+<td style="text-align: right;">-0.35</td>
+<td style="text-align: right;">-1.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Algeria</td>
+<td style="text-align: right;">0.44</td>
+<td style="text-align: right;">-0.29</td>
+<td style="text-align: right;">-0.22</td>
+<td style="text-align: right;">-0.31</td>
+<td style="text-align: right;">1.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Angola</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">-0.33</td>
+<td style="text-align: right;">-0.23</td>
+<td style="text-align: right;">-0.35</td>
+<td style="text-align: right;">-1.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Argentina</td>
+<td style="text-align: right;">-0.31</td>
+<td style="text-align: right;">-0.28</td>
+<td style="text-align: right;">-0.14</td>
+<td style="text-align: right;">-0.21</td>
+<td style="text-align: right;">-0.28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Australia</td>
+<td style="text-align: right;">-0.39</td>
+<td style="text-align: right;">-0.02</td>
+<td style="text-align: right;">-0.20</td>
+<td style="text-align: right;">-0.27</td>
+<td style="text-align: right;">0.38</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">-0.45</td>
+<td style="text-align: right;">-0.10</td>
+<td style="text-align: right;">-0.22</td>
+<td style="text-align: right;">-0.32</td>
+<td style="text-align: right;">0.32</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dist0 <span class="ot">&lt;-</span> Hmisc<span class="sc">::</span><span class="fu">hist.data.frame</span>(df.scale0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="space_program_clustering_files/figure-html/scale-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Behind the scenes, I did some skewness and kurtosis calculations that confirm what we can visually interpret below.</p>
+</div></div><p>Okay, so yikes. Look how the features are “right skewed,” meaning that a few huge outliers are present in our dataset <sup>(cough&nbsp;USA&nbsp;cough)</sup>.</p>
+<p>In the case of unsupervised machine learning, that might not prove to be an issue! But in the case of visualizing these things as human, these really large outliers are going to be distracting in later analysis.</p>
+<p>Luckily, I have a solution that doesn’t involve removing outliers. Why don’t we want to cut out outliers? Outliers, though “distracting,” are still an important part of the dataset! As we eventually make models, it’s important to remember that even the smallest and biggest programs are still parts of the ecosystem. Every model we will make is relative, and ignoring players is a certain way to draw bad conclusions.</p>
+<p>Instead, we can treat our data logarithmically, by applying <span class="math inline">\({\log (x)}\)</span> to columns with high skewness. This is called “normalization,” or making things more…normal. We want a nice, normal hill.</p>
+<p>So, why is removing outliers not ideal, but logging okay? It’s because the relative structure and integrity of the data remains intact.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df.norm1 <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_all</span>(<span class="sc">~</span><span class="fu">log</span>(. <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df.scale1 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">scale</span>(df.norm1))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>dist1 <span class="ot">&lt;-</span> Hmisc<span class="sc">::</span><span class="fu">hist.data.frame</span>(df.norm1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="space_program_clustering_files/figure-html/norm-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Nice. Everything looks a lot less visually distorted when logged, so I’ll stick with <code>df.norm1</code> moving forward. (Note that our goal isn’t to achieve a normal distribution here: our data is neither normal nor log-normal, and we’re not trying to assume normality.)</p>
+</section>
+<section id="find-multicollinearity" class="level4">
+<h4 class="anchored" data-anchor-id="find-multicollinearity">Find multicollinearity</h4>
+<p>Now back to the multicollinearity I mentioned before. Multicollinearity isn’t necessarily a bad thing when it comes to unsupervised machine learning. In fact, in some models, it can be very informative. In general, though, it indicates the degree to which a dataset is redundant.</p>
+<p>In this correlation matrix, a <span class="math inline">\(1.00\)</span> indicates that there is perfect correlation. (Something will always be a <span class="math inline">\(1.00\)</span> with itself.) A <span class="math inline">\(0\)</span> indicates no correlation at all, and a negative number indicates the opposite <em>direction</em> of correlation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cor_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(df.norm1)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>corrplot<span class="sc">::</span><span class="fu">corrplot</span>(cor_matrix, <span class="at">method =</span> <span class="st">"number"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="space_program_clustering_files/figure-html/corr-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>I’m happy with this. The fact that some variables have a relationship hovering around 0.2 or 0.3 tells me that this dataset is definitely worth exploring.</p>
+</section>
+</section>
+</section>
+<section id="principal-component-analysis" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="principal-component-analysis">Principal component analysis</h2>
+<p>I’m not quite yet finished with multicollinearity. I’ll come back to it, but I want to take a moment to explain principal component analysis (PCA) and why it is useful for what we are about to do.</p>
+<p>In essence, PCA boils down as many features, or variables, we have into that many dimensions. A dataset with 6 variables will be given 6 dimensions after a PCA. The math is a bit mathy, but the point is that we are seeing the “essentials,” or, quite literally, the principal components, by summarizing our variables.</p>
+<p>The first dimension might be dominated by variable <span class="math inline">\(x\)</span>, while the second dimension might show that variables <span class="math inline">\(y\)</span> and <span class="math inline">\(z\)</span> pull against each other. Here’s my code to build a PCA:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(df.norm1)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>components <span class="ot">&lt;-</span> pca<span class="sc">$</span>x <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(PC1,PC2,PC3) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">PC2 =</span> <span class="sc">-</span>PC2)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>exvar <span class="ot">&lt;-</span> <span class="fu">summary</span>(pca)<span class="sc">$</span>sdev[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>loadings <span class="ot">&lt;-</span> pca<span class="sc">$</span>rotation <span class="sc">%&gt;%</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">PC2 =</span> <span class="sc">-</span>PC2,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">PC4 =</span> <span class="sc">-</span>PC4</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>scaled_loadings <span class="ot">&lt;-</span> <span class="fu">sweep</span>(loadings[, <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(exvar)], <span class="dv">2</span>, exvar, <span class="st">`</span><span class="at">*</span><span class="st">`</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>features <span class="ot">=</span> scaled_loadings <span class="sc">%&gt;%</span> <span class="fu">row.names</span>()</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>corrplot<span class="sc">::</span><span class="fu">corrplot</span>(loadings, <span class="at">method =</span> <span class="st">"number"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="space_program_clustering_files/figure-html/pca-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Breaking our dataset down into principal components gives us an idea of how our variables are related to one another. We can see that each successive principal component has different “loadings” respective to each variable. Principal components are in order of weight. PC1 will be the most influential, while PC5 has little, if any, real say in how our data are distributed.</p>
+<p>Funnily enough, <code>budget_gdp_percent</code> is a fat goose egg until the weakest component; the PCA is telling us that budget as a percent of GDP is a terrible measure to separate space programs. I’m prepared to call a FRAUD ALERT. Just to confirm that I’m justified in removing this variable outright, let’s consider a Euclidean distance measure of the loadings to see what amounts to be a “total influence” measure:</p>
+<div class="grid">
+<div class="g-col-6">
+<div class="cell">
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Magnitude</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: #e09890 !important;">budget_gdp_percent</td>
+<td style="text-align: right; background-color: #e09890 !important;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">budget_capita_usd</td>
+<td style="text-align: right;">1.261</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">active_sats</td>
+<td style="text-align: right;">1.898</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">interactions</td>
+<td style="text-align: right;">2.056</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">interactivity</td>
+<td style="text-align: right;">0.504</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<div class="g-col-1">
+
+</div>
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/packwatch.jpg" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Okay…that’s even more pathetic than I expected. This procedure is part of good data processing! The loadings gave us enough to cut out our weakest feature, making the data process a bit easier moving forward. But to draw better conclusions, let’s turn to a visual that shows the different ways our other four variables influence the distribution.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-1cdb7a5713475d20749c" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-1cdb7a5713475d20749c">{"x":{"visdat":{"5ab054923f23":["function () ","plotlyVisDat"]},"cur_data":"5ab054923f23","attrs":{"5ab054923f23":{"x":{},"y":{},"z":{},"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","size":12,"text":["ALCE","Algeria","Angola","Argentina","Australia","Austria","Azerbaijan","Bahrain","Bangladesh","Belarus","Belgium","Bolivia","Brazil","Burma","Canada","Chile","China","Colombia","Croatia","Czech Republic","Denmark","Egypt","ESA","Ethiopia","Ethiopia (2021)","Finland","France","Gabon","Germany","Ghana","Greece","Hungary","India","Indonesia","Iran","Israel","Italy","Japan","Kazakhstan","Kenya","Laos","Libya","Luxembourg","Malaysia","Mexico","Morocco","Netherlands","New Zealand","Nigeria","Norway","Oman","Pakistan","Philippines","Poland","Portugal","Qatar","Romania","Russia","Saudi Arabia","Singapore","Slovenia","South Africa","South Korea","Spain","Sweden","Switzerland","Taiwan","Thailand","Tunisia","Turkey","Turkmenistan","Ukraine","United Arab Emirates","United Kingdom","United States","Venezuela","Vietnam","Zimbabwe","Zimbabwe (2021)"],"inherit":true},"5ab054923f23.1":{"x":[0,1.5962473900519165],"y":[0,4.7344981106985067],"z":[0,0.059224628529243775],"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","line":{"color":"black","width":3},"inherit":true},"5ab054923f23.2":{"x":1.5962473900519165,"y":4.7344981106985067,"z":0.059224628529243775,"mode":"text","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","text":"budget_capita_usd","textposition":"bottom center","inherit":true},"5ab054923f23.3":{"x":1.5962473900519165,"y":4.7344981106985067,"z":0.059224628529243775,"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"cone","u":0.31924947801038328,"v":0.94689962213970125,"w":0.011844925705848755,"sizemode":"scaled","colorscale":[[0,1],["black","black"]],"showscale":false,"inherit":true},"5ab054923f23.4":{"x":[0,3.185730100323569],"y":[0,-1.204999884774157],"z":[0,2.6183384384205555],"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","line":{"color":"black","width":3},"inherit":true},"5ab054923f23.5":{"x":3.185730100323569,"y":-1.204999884774157,"z":2.6183384384205555,"mode":"text","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","text":"active_sats","textposition":"bottom center","inherit":true},"5ab054923f23.6":{"x":3.185730100323569,"y":-1.204999884774157,"z":2.6183384384205555,"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"cone","u":0.63714602006471377,"v":-0.24099997695483139,"w":0.52366768768411109,"sizemode":"scaled","colorscale":[[0,1],["black","black"]],"showscale":false,"inherit":true},"5ab054923f23.7":{"x":[0,3.4829558941863112],"y":[0,-1.0417912161310787],"z":[0,-1.9723582881389339],"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","line":{"color":"black","width":3},"inherit":true},"5ab054923f23.8":{"x":3.4829558941863112,"y":-1.0417912161310787,"z":-1.9723582881389339,"mode":"text","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","text":"interactions","textposition":"bottom center","inherit":true},"5ab054923f23.9":{"x":3.4829558941863112,"y":-1.0417912161310787,"z":-1.9723582881389339,"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"cone","u":0.69659117883726229,"v":-0.20835824322621577,"w":-0.3944716576277868,"sizemode":"scaled","colorscale":[[0,1],["black","black"]],"showscale":false,"inherit":true},"5ab054923f23.10":{"x":[0,0.41489304259974241],"y":[0,-0.21719571698969981],"z":[0,-3.7749965627103084],"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","line":{"color":"black","width":3},"inherit":true},"5ab054923f23.11":{"x":0.41489304259974241,"y":-0.21719571698969981,"z":-3.7749965627103084,"mode":"text","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","text":"interactivity","textposition":"bottom center","inherit":true},"5ab054923f23.12":{"x":0.41489304259974241,"y":-0.21719571698969981,"z":-3.7749965627103084,"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"cone","u":0.082978608519948482,"v":-0.043439143397939958,"w":-0.75499931254206165,"sizemode":"scaled","colorscale":[[0,1],["black","black"]],"showscale":false,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"plot_bgcolor":"#e5ecf6","showlegend":false,"showtitle":false,"scene":{"xaxis":{"title":"PC1"},"yaxis":{"title":"PC2"},"zaxis":{"title":"PC3"}},"xaxis":{"title":[]},"yaxis":{"title":[]},"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-3.69140923281426,-0.20425046415434786,-3.5604345838997022,1.7875396761547715,1.2513506415853861,-0.36564806203517819,-0.90898789039184624,-3.5508300160404174,-1.8975516323591939,-1.4904954959331298,1.6268657747988513,-2.368233035948915,0.75862953377056253,-3.7056488598499118,3.2381865511936945,-1.1041497923510362,3.9288414026110696,-2.4000216798265397,-3.0725294253712927,-0.76349195022017302,1.3856303452510161,-0.99850216323103813,5.9609761082630301,-2.1914148643861164,-3.0434879735059117,1.4452352039704195,6.7113694349740927,-3.6177263739324537,4.835678581542302,-3.677170972768649,0.24766853839273817,-2.030282214339219,3.9879840212555915,-0.40582889178456399,-3.0588779704773139,1.5810285618744391,4.9368837031437414,3.8318229142367444,-0.13257028850089142,-3.310713109489908,-2.4078277032891702,-3.5302190742941821,3.6955113769077665,-1.3495241022000677,0.07600314885146689,-0.76799860523588104,1.7511615643249721,2.8775491362930645,-1.4244221933393271,3.0217136026394615,-3.1602294937740445,-1.8230880572424473,-2.6959960982005127,-0.34422332610045669,-3.1620488912273754,-1.7050938000817728,-3.3007883686357884,6.6654896901999034,0.16717961987694002,0.56244348623681983,-1.0891391573480294,-0.68847846060768036,1.7352221853741745,3.5418980634417645,0.37982176092348219,1.273064616758653,0.79770565550568662,-0.25428877296993069,-2.5975680700523776,0.01723438536775293,-1.3513485326586185,2.0363946477594714,1.1985784687426069,6.3963618845440751,8.5323889855451061,-2.0376930371614845,-0.76884612369903726,-3.2103983986915678,-3.0219360618898521],"y":[-0.20484380347744413,-0.38727663742858937,0.18362933151399707,-0.94777101337351377,0.62438344584416317,0.91444610672021953,0.87965560785940966,0.21211665037650862,-0.95527743065175164,0.56380945639978508,1.3234887536426514,0.46553179780784182,-1.7068501062347565,-0.24707879018282541,-0.030980411292991818,-0.6515663652686825,-0.79733739752168908,-0.6683725938418742,1.6307646976540042,0.73994809041491927,0.25765076384797331,-0.66952299439704366,-0.4385023609900135,-0.79619608935765018,-0.62400595194862596,0.54006431750714357,0.34104860618202065,0.01370086468670062,0.24128813031035701,-0.16261287128880142,-0.26854949946442253,0.42828122793412399,-2.1414150860081573,-1.0136039237693792,0.19430657731971962,0.35138899100276527,0.42037092092191786,0.74324452249928208,0.46649566717061847,-0.55264091797036963,0.34809331121455961,0.27324906967781382,3.0011049487521495,-0.95667183392618937,-1.3827879050360099,-1.1494678192231549,0.9681240244594751,-1.0275990499403616,-0.79410665234199174,1.0695269782192636,1.3706447370835739,-0.97104266322680333,-0.50661926640562915,-0.41871692192661036,1.3652483719217019,1.3927958404672409,0.95374461770220953,-0.54515789084010635,-0.58660299149364159,0.013168952452862127,0.73459801869323971,-0.071015905522446354,0.50218549800449297,-0.52680259400738794,0.91375661883676673,1.4420953602781419,-0.36738676434236367,-0.91859007494110145,-0.21467998668535379,-1.6723994812657459,1.1322459114356986,-1.148395272925401,0.60022434608864494,-0.56595298838299535,0.88981464086696938,-0.34025441947371571,-1.1263522777312813,-0.25510570399920585,0.30387693433514901],"z":[0.46390345677440825,-0.72706967600427541,0.46876293217719067,0.25053448127743821,-0.27885963298176686,-0.36430309323193311,-0.75234320513106523,0.46911928481224918,-1.2343472797547661,-0.18240316301210865,-0.84481763676405808,0.042788411560863729,-0.30544645148489302,0.46337513226353533,0.043042532222255209,-0.14785763014134068,2.0737799710675748,-0.43618903515392793,0.48686539044990673,0.0094452198624014536,-0.14711620681125881,-0.27231589764770953,-0.031112430063502838,0.081668887487892319,1.0372798406034396,0.14244410561391158,0.024385738794992395,0.46663726857165466,-0.32136884345824585,0.46443173056665343,-1.2217437026766049,-0.42247080912420487,0.66692222088681852,-0.20946876731757244,0.83396491394919903,0.48945639096764681,-0.061153041634877503,0.48003938592840351,-0.18246634322143335,0.82462122283240646,0.041319353895003144,0.46988400046733236,-0.14224895829143572,-0.40675360466343541,-0.30979956978861534,-1.1876470320979609,-0.1845689194268394,0.41022038167218844,-0.25545164280708843,-0.55551823244625576,0.48361150636808325,0.11826617300539023,0.030627611343782737,-0.052649693003509523,0.48354400233393924,-0.41040553455809592,0.47839643306424873,0.58068666214095954,0.29196909757987827,-0.15548345076397352,-0.59300790672793902,0.20497055106100548,-0.34551467312665535,-0.62007218513470486,-0.88358120622132763,0.1124874707704351,-0.16152567984037028,-0.33986503216363406,0.034279528609407597,-0.35639042399667042,-0.99923503643312617,-0.65897473881408708,-0.3536576496033238,0.15703558833882886,1.5558282128158196,0.087372338075159608,-0.37244210312952297,0.82834314057528036,0.83533554786652842],"mode":"markers","type":"scatter3d","text":["ALCE","Algeria","Angola","Argentina","Australia","Austria","Azerbaijan","Bahrain","Bangladesh","Belarus","Belgium","Bolivia","Brazil","Burma","Canada","Chile","China","Colombia","Croatia","Czech Republic","Denmark","Egypt","ESA","Ethiopia","Ethiopia (2021)","Finland","France","Gabon","Germany","Ghana","Greece","Hungary","India","Indonesia","Iran","Israel","Italy","Japan","Kazakhstan","Kenya","Laos","Libya","Luxembourg","Malaysia","Mexico","Morocco","Netherlands","New Zealand","Nigeria","Norway","Oman","Pakistan","Philippines","Poland","Portugal","Qatar","Romania","Russia","Saudi Arabia","Singapore","Slovenia","South Africa","South Korea","Spain","Sweden","Switzerland","Taiwan","Thailand","Tunisia","Turkey","Turkmenistan","Ukraine","United Arab Emirates","United Kingdom","United States","Venezuela","Vietnam","Zimbabwe","Zimbabwe (2021)"],"marker":{"color":"rgba(31,119,180,1)","size":[55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":55},"error_y":{"color":"rgba(31,119,180,1)","width":55},"error_x":{"color":"rgba(31,119,180,1)","width":55},"line":{"color":"rgba(31,119,180,1)","width":55},"frame":null},{"x":[0,1.5962473900519165],"y":[0,4.7344981106985067],"z":[0,0.059224628529243775],"mode":"lines","type":"scatter3d","line":{"color":"black","width":3},"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"frame":null},{"x":[1.5962473900519165],"y":[4.7344981106985067],"z":[0.059224628529243775],"mode":"text","type":"scatter3d","text":"budget_capita_usd","textposition":"bottom center","marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"line":{"color":"rgba(44,160,44,1)"},"frame":null},{"colorbar":{"title":"PC3","ticklen":2},"colorscale":[[0,"black"],[1,"black"]],"showscale":false,"x":[1.5962473900519165],"y":[4.7344981106985067],"z":[0.059224628529243775],"mode":"markers","type":"cone","u":[0.31924947801038328],"v":[0.94689962213970125],"w":[0.011844925705848755],"sizemode":"scaled","frame":null},{"x":[0,3.185730100323569],"y":[0,-1.204999884774157],"z":[0,2.6183384384205555],"mode":"lines","type":"scatter3d","line":{"color":"black","width":3},"marker":{"color":"rgba(148,103,189,1)","line":{"color":"rgba(148,103,189,1)"}},"error_y":{"color":"rgba(148,103,189,1)"},"error_x":{"color":"rgba(148,103,189,1)"},"frame":null},{"x":[3.185730100323569],"y":[-1.204999884774157],"z":[2.6183384384205555],"mode":"text","type":"scatter3d","text":"active_sats","textposition":"bottom center","marker":{"color":"rgba(140,86,75,1)","line":{"color":"rgba(140,86,75,1)"}},"error_y":{"color":"rgba(140,86,75,1)"},"error_x":{"color":"rgba(140,86,75,1)"},"line":{"color":"rgba(140,86,75,1)"},"frame":null},{"colorbar":{"title":"PC3","ticklen":2},"colorscale":[[0,"black"],[1,"black"]],"showscale":false,"x":[3.185730100323569],"y":[-1.204999884774157],"z":[2.6183384384205555],"mode":"markers","type":"cone","u":[0.63714602006471377],"v":[-0.24099997695483139],"w":[0.52366768768411109],"sizemode":"scaled","frame":null},{"x":[0,3.4829558941863112],"y":[0,-1.0417912161310787],"z":[0,-1.9723582881389339],"mode":"lines","type":"scatter3d","line":{"color":"black","width":3},"marker":{"color":"rgba(127,127,127,1)","line":{"color":"rgba(127,127,127,1)"}},"error_y":{"color":"rgba(127,127,127,1)"},"error_x":{"color":"rgba(127,127,127,1)"},"frame":null},{"x":[3.4829558941863112],"y":[-1.0417912161310787],"z":[-1.9723582881389339],"mode":"text","type":"scatter3d","text":"interactions","textposition":"bottom center","marker":{"color":"rgba(188,189,34,1)","line":{"color":"rgba(188,189,34,1)"}},"error_y":{"color":"rgba(188,189,34,1)"},"error_x":{"color":"rgba(188,189,34,1)"},"line":{"color":"rgba(188,189,34,1)"},"frame":null},{"colorbar":{"title":"PC3","ticklen":2},"colorscale":[[0,"black"],[1,"black"]],"showscale":false,"x":[3.4829558941863112],"y":[-1.0417912161310787],"z":[-1.9723582881389339],"mode":"markers","type":"cone","u":[0.69659117883726229],"v":[-0.20835824322621577],"w":[-0.3944716576277868],"sizemode":"scaled","frame":null},{"x":[0,0.41489304259974241],"y":[0,-0.21719571698969981],"z":[0,-3.7749965627103084],"mode":"lines","type":"scatter3d","line":{"color":"black","width":3},"marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"frame":null},{"x":[0.41489304259974241],"y":[-0.21719571698969981],"z":[-3.7749965627103084],"mode":"text","type":"scatter3d","text":"interactivity","textposition":"bottom center","marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"frame":null},{"colorbar":{"title":"PC3","ticklen":2},"colorscale":[[0,"black"],[1,"black"]],"showscale":false,"x":[0.41489304259974241],"y":[-0.21719571698969981],"z":[-3.7749965627103084],"mode":"markers","type":"cone","u":[0.082978608519948482],"v":[-0.043439143397939958],"w":[-0.75499931254206165],"sizemode":"scaled","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Why are there only 3 PCs for 4 variables?</p>
+<p>There <em>is</em> a PC4, but the later components are weaker in importance, and we can’t visually show 4-D, so we choose to ignore it on the plot. Just because we aren’t showing it doesn’t mean we ignore it in the math later on, though.</p>
+</div></div><p>This graphic is really telling! Observe how the countries are naturally falling on a general line from “big programs” to “small programs.” However, different variables have different influences.</p>
+<p><code>active_sats</code>, <code>interactions</code>, and <code>interactivity</code> roughly fall on a single plane, which makes sense: all three variables exclusively cover satellite activity, so in some way or another, they are going to be interrelated. Meanwhile, <code>budget_capita_usd</code> is nearly orthogonal (at a 90-degree angle) to this plane of satellite activity, showing us that space program budgets and activity are absolutely separate measures of space program size.</p>
+<p>At face value after seeing this data, that might make sense. But classically speaking, a country with a bigger space budget should be launching more satellites, right? This PCA implies that things are actually much more nuanced.</p>
+</section>
+<section id="clustering" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="clustering">Clustering</h2>
+<p>Okay. We’re in good shape. The PCA has confirmed that something interesting is going on. Even better, PCA takes care of all the heavy lifting for the first type of clustering we’ll try.</p>
+<section id="k-means-clustering" class="level3">
+<h3 class="anchored" data-anchor-id="k-means-clustering"><span class="math inline">\(k\)</span>-means clustering</h3>
+<p>Don’t get too overwhelmed: it’s a simpler concept than you think. After breaking things down into principal components, we define <span class="math inline">\(k\)</span> number of clusters ourselves, and the machine learning algorithm finds that <span class="math inline">\(k\)</span> amount of central <em>means</em> around which <span class="math inline">\(k\)</span> number of groups will form.</p>
+<p>Think of these clusters like mini solar systems. The little data points, or planets, hovering around get pulled into the mean’s, or star’s, orbit, so that we can visually separate them!</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://editor.analyticsvidhya.com/uploads/56854k%20means%20clustering.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">A nifty MS Paint illustration. Source: Analytics Vidhya</figcaption>
+</figure>
+</div>
+<p>Wait, wait, wait. How do we decide <span class="math inline">\(k\)</span>? Do we just pull a random number out of a hat? Well…I guess we could. In theory, <span class="math inline">\(k\)</span>-means clustering is robust enough to maintain some extent of validity no matter how many clusters we choose (even if it might be ugly or inconclusive).</p>
+<p>There’s a better way, though. I’m going to use the neat <code>NbClust</code> package in <code>factoextra</code> that uses a series of indices to tell us ideal number of clusters.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(df.norm1, kmeans, <span class="at">method=</span><span class="st">'silhouette'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="space_program_clustering_files/figure-html/nbclust-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can see that the silhouette method tells us that 2 clusters is the ideal. Nonetheless, let’s consider the context of what we want to get out of the study. It would be nice to have a higher number of clusters that gives us a higher level analysis than “there is one strong group and one weak group.” Per the silhouette chart, <span class="math inline">\(k\)</span> of 3, 4, or 6 aren’t bad choices either. For now, let’s try <span class="math inline">\(k=4\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plot_km <span class="ot">&lt;-</span> <span class="cf">function</span>(data, k, <span class="at">nboot =</span> <span class="dv">2</span>) {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  km <span class="ot">&lt;-</span> <span class="fu">eclust</span>(data, <span class="st">"kmeans"</span>, <span class="at">k =</span> k, <span class="at">nboot =</span> nboot)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  df_km <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">k_cluster =</span> <span class="fu">factor</span>(km<span class="sc">$</span>cluster)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># based on the PCA, I'm going to use interactivity, active_sats and budget as axes</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  km_fig <span class="ot">&lt;-</span> <span class="fu">plot_ly</span>(df_km, </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">x =</span> <span class="sc">~</span>budget_capita_usd, </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="sc">~</span>active_sats, </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">z =</span> <span class="sc">~</span>interactivity, </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> <span class="sc">~</span>k_cluster,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mode =</span> <span class="st">'markers'</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>                    <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">size =</span> <span class="dv">6</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_markers</span>(<span class="at">text =</span> <span class="fu">rownames</span>(df_km)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layout</span>(</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot_bgcolor =</span> <span class="st">"#e5ecf6"</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(km_fig)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_km</span>(df.norm1, <span class="at">k =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="space_program_clustering_files/figure-html/km-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-3166ec34518b17cb70f9" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-3166ec34518b17cb70f9">{"x":{"visdat":{"5ab0756546fa":["function () ","plotlyVisDat"]},"cur_data":"5ab0756546fa","attrs":{"5ab0756546fa":{"x":{},"y":{},"z":{},"mode":"markers","marker":{"size":6},"color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","text":["ALCE","Algeria","Angola","Argentina","Australia","Austria","Azerbaijan","Bahrain","Bangladesh","Belarus","Belgium","Bolivia","Brazil","Burma","Canada","Chile","China","Colombia","Croatia","Czech Republic","Denmark","Egypt","ESA","Ethiopia","Ethiopia (2021)","Finland","France","Gabon","Germany","Ghana","Greece","Hungary","India","Indonesia","Iran","Israel","Italy","Japan","Kazakhstan","Kenya","Laos","Libya","Luxembourg","Malaysia","Mexico","Morocco","Netherlands","New Zealand","Nigeria","Norway","Oman","Pakistan","Philippines","Poland","Portugal","Qatar","Romania","Russia","Saudi Arabia","Singapore","Slovenia","South Africa","South Korea","Spain","Sweden","Switzerland","Taiwan","Thailand","Tunisia","Turkey","Turkmenistan","Ukraine","United Arab Emirates","United Kingdom","United States","Venezuela","Vietnam","Zimbabwe","Zimbabwe (2021)"],"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"plot_bgcolor":"#e5ecf6","scene":{"xaxis":{"title":"budget_capita_usd"},"yaxis":{"title":"active_sats"},"zaxis":{"title":"interactivity"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[1.1830117025762945,1.2983906470205113,2.6108160598008587,2.371527044228158,3.3861523980051826,0.24208741147453941,0.65403158960109464,2.3075217402982058,0.66882294603926584,2.5991773390739508,1.4338299994199819,0.53130219202521911,2.4700596136763169,2.0228463275391797,0.33258409055347476,0.27665876728716654,3.0971764849985877,1.1176878520710198,1.1269765388141877,1.8138610274983071,1.3425386721372836,2.6477162938344394,2.6012304678540894,3.399717529622595,1.5274617547963063,0.66772386323631838,0.038472255285992706,1.1733847890280904,2.5700627031476673,0.3068440998263981],"y":[1.791759469228055,3.6888794541139363,2.7080502011022101,1.6094379124341003,2.4849066497880004,2.8903717578961645,1.6094379124341003,2.9444389791664403,1.6094379124341003,3.0910424533583161,1.791759469228055,2.0794415416798357,3.4339872044851463,1.9459101490553132,2.3978952727983707,1.3862943611198906,2.9957322735539909,2.0794415416798357,2.6390573296152584,2.4849066497880004,1.9459101490553132,2.9957322735539909,1.791759469228055,2.7725887222397811,2.7080502011022101,2.0794415416798357,2.3978952727983707,3.3672958299864741,2.6390573296152584,1.791759469228055],"z":[1.3862943611198906,0.81377516834856001,1.122142786078304,1.0986122886681098,1.5533484457830566,1.1370785694959058,0.91629073187415511,1.041453874828161,1.0116009116784799,0.84729786038720345,1.791759469228055,0.99852883011112725,0.64185388617239469,0.9808292530117263,1.0986122886681098,1.7346010553881064,1.0809127115687089,0.88730319500090293,0.69314718055994529,1.003302108863785,0.69314718055994529,1.1986957472250923,1.5260563034950492,0.84729786038720345,1.0245043165143877,1.0986122886681098,1.1314021114911006,1.4635860354215371,1.1727202608218317,1.0986122886681098],"mode":"markers","marker":{"color":"rgba(102,194,165,1)","size":6,"line":{"color":"rgba(102,194,165,1)"}},"type":"scatter3d","text":["Algeria","Argentina","Australia","Austria","Belgium","Brazil","Chile","Denmark","Egypt","Finland","Greece","Indonesia","Israel","Kazakhstan","Mexico","Morocco","Netherlands","Poland","Saudi Arabia","Singapore","South Africa","South Korea","Sweden","Switzerland","Taiwan","Thailand","Turkey","Ukraine","United Arab Emirates","Vietnam"],"name":"1","textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[2.1626704476385203,1.6844114449149474,1.3146670436304746,2.1845077082965076,2.0848264580508808,1.3831478870050555,1.1906428241172093,1.9098007018847409,1.9041017185546201,2.4017506934499573,1.9694328128974936,2.2624271908716156],"y":[1.0986122886681098,1.0986122886681098,0.69314718055994529,0,1.6094379124341003,0.69314718055994529,0.69314718055994529,0,0,0.69314718055994529,1.0986122886681098,0.69314718055994529],"z":[1.3862943611198906,0.91629073187415511,0.69314718055994529,0,0.81093021621632877,1.0986122886681098,0.69314718055994529,0,0,1.0986122886681098,1.2527629684953681,1.6094379124341003],"mode":"markers","marker":{"color":"rgba(252,141,98,1)","size":6,"line":{"color":"rgba(252,141,98,1)"}},"type":"scatter3d","text":["Azerbaijan","Belarus","Bolivia","Croatia","Czech Republic","Hungary","Laos","Oman","Portugal","Qatar","Slovenia","Turkmenistan"],"name":"2","textfont":{"color":"rgba(252,141,98,1)"},"error_y":{"color":"rgba(252,141,98,1)"},"error_x":{"color":"rgba(252,141,98,1)"},"line":{"color":"rgba(252,141,98,1)"},"frame":null},{"x":[0.24596168059450155,0.65621966983480939,0.68630450480194038,0.10632193660182965,0.20135823402226252,0.22499574908583397,0.17460025872555598,0.082906792188290085,0.47676192916815846,0.29056084528020887,0.84391189844228365,0.05507697040395778,0.75086511700618308,0.28338705777767509,0.41574556720904776,0.1264702682295813,0.28799954743197664,1.4695215955954188,0.59631024150595091,0.65611029339390547,0.36929740836212899,0.95962675823685628],"y":[0,0,0,0.69314718055994529,0,0.69314718055994529,1.0986122886681098,1.0986122886681098,0,0,0.69314718055994529,0.69314718055994529,0,1.3862943611198906,1.3862943611198906,1.3862943611198906,0.69314718055994529,0,0.69314718055994529,1.0986122886681098,0.69314718055994529,0.69314718055994529],"z":[0,0,0,1.791759469228055,0,1.0986122886681098,0.69314718055994529,0,0,0,0,0,0,1.0986122886681098,0.9808292530117263,0.69314718055994529,0.69314718055994529,0,0.69314718055994529,0.69314718055994529,0,0],"mode":"markers","marker":{"color":"rgba(141,160,203,1)","size":6,"line":{"color":"rgba(141,160,203,1)"}},"type":"scatter3d","text":["ALCE","Angola","Bahrain","Bangladesh","Burma","Colombia","Ethiopia","Ethiopia (2021)","Gabon","Ghana","Iran","Kenya","Libya","Malaysia","Nigeria","Pakistan","Philippines","Romania","Tunisia","Venezuela","Zimbabwe","Zimbabwe (2021)"],"name":"3","textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"frame":null},{"x":[2.6256774217639527,2.1740813594569981,3.1040504119875978,4.0831159290541166,3.3867812782167768,0.87327360442322666,3.592530284562145,3.5566261548377196,5.6446759035649823,1.5720458400745811,3.5922065787377484,3.2367650014830844,2.242534536967717,3.1244500180172867,5.2128119882378412],"y":[4.2626798770413155,6.3664704477314382,5.9989365619466826,6.3279367837291947,4.990432586778736,5.5645204073226937,5.1590552992145291,4.7273878187123408,3.784189633918261,4.4773368144782069,3.5553480614894135,6.815639990074331,4.1896547420264252,6.4035741979348151,8.3067190432026905],"z":[1.0245043165143877,0.10913993950036338,1.2506284959667353,1.2494351784026934,1.3776958558646588,0.69314718055994529,1.1958473968820189,0.76629806219556051,1.144074662744867,0.77583889640505876,1.4223993657620069,0.87939442824931335,1.5227062166097673,1.1476919684273463,0.40924396744761521],"mode":"markers","marker":{"color":"rgba(231,138,195,1)","size":6,"line":{"color":"rgba(231,138,195,1)"}},"type":"scatter3d","text":["Canada","China","ESA","France","Germany","India","Italy","Japan","Luxembourg","New Zealand","Norway","Russia","Spain","United Kingdom","United States"],"name":"4","textfont":{"color":"rgba(231,138,195,1)"},"error_y":{"color":"rgba(231,138,195,1)"},"error_x":{"color":"rgba(231,138,195,1)"},"line":{"color":"rgba(231,138,195,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Check that out. We can see four machine-generated clusters. One, that includes the USA, France, and China, shows the stereotypical “big” space programs that have high levels of funding and activity.</p>
+</section>
+<section id="hierarchical-clustering" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="hierarchical-clustering">Hierarchical clustering</h3>
+<p>For our final trick, let’s pull out another type of clustering. Hierarchical clustering makes a dendrogram, which is essentially a family tree of data points that shows close and distant relations. You can imagine that the “siblings” on the tree are very similar in the variables we have chosen, and the “distant cousins” aren’t.</p>
+<p>How does an algorithm decide this family tree? There are two options when we hierarchically cluster.</p>
+<ul>
+<li><p>“Bottom-up” approach: the algorithm considers every country as an individual and looks for similar countries, grouping individuals into pairs then grouping pairs into larger clusters until the entire tree is connected.</p></li>
+<li><p>“Top-down” approach: the algorithm considers every country as one big group, and continuously finds differences to split them up until every single country is divided by those differences.</p></li>
+</ul>
+<p>For this usage, I’m going with Ward’s minimum variance method, which is a type of “bottom-up” hierarchical clustering. If you really want to know, it uses the squared Euclidean distance between each data point to determine similarity.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Where <span class="math inline">\(d_{ij}\)</span> is our distance measure:</p>
+<p><span class="math display">\[
+d_{ij}=d(\{X_i\},\{X_j\})=||X_i-X_j||^2
+\]</span></p>
+</div></div><p>So why don’t I do some sort of test to see the “ideal” number of clusters? Unlike <span class="math inline">\(k\)</span>-means clusters, where <span class="math inline">\(k\)</span> directly influences the quality and integrity of the clusters, the hierarchical clustering algorithm is static, and the number of h-clusters I define is only for the purpose of visualization.</p>
+<p>That’s because Ward’s method consistently computes distance. Take a look at our “family tree” below. It has a numerical y-axis labelled “Distance.” The farther the separation between two groups or countries, the farther apart they are in similarity. Look at the giant divide between the largest left and right groupings. The clustering algorithm determined that there is an extremely high-distance gap between the highest-output space programs and their younger counterparts.</p>
+<p>For that reason, I find h-clustering to be more informative than <span class="math inline">\(k\)</span>-means in this scenario. The family tree structure is visually powerful: for instance, take a look at the small grouping in blue of barely-funded African space programs, or the close pairing of China and India, two highly-funded but relatively young programs that are competing to break into the upper echelon of space-exploring countries.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="space_program_clustering_files/figure-html/hcluster-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Four-tiered structure:</p>
+<blockquote class="blockquote">
+<p>Red: tier <strong>1*</strong></p>
+<p>Green: tier <strong>1</strong></p>
+<p>Purple: tier <strong>2</strong></p>
+<p>Teal: tier <strong>3</strong></p>
+</blockquote>
+</div></div><section id="discussion" class="level4">
+<h4 class="anchored" data-anchor-id="discussion">Discussion</h4>
+<p>This leaves us with four clear divisions between space programs. What exactly, can we conclude?</p>
+<p>First of all, a disclaimer: not much. There’s a tenet of “garbage in, garbage out” when it comes to unsupervised learning methods. Our initial dataset was both comprehensive and limited. The budget data and satellite data covered many countries, but we importantly lack futher variables. A space program shouldn’t be defined only by “number of satellites” and “amount of budget.” The data was also flawed in the sense that budget data is entirely dependent on accessible. While some governments are forthcoming and transparent with their data, many don’t even have an official website for their space program. We relied on consultant estimates for many of the programs, which is less than reliable going forward.</p>
+<p>Second of all, a point of optimism: a lot. It’s important to approach quantitative methods qualitatively. Based on existing knowledge about space programs, the results line up! Even the surprises are pretty easy to explain. Did you know that France has the biggest satellite industry outside of Russia and the United States? What we can draw from these clustering methods needs an asterisk that this was to explore methodology rather than draw definite conclusions.</p>
+<p>On the general left, there is a clustering of highest-performing space programs that we generally termed tier <span class="math inline">\(1\)</span>. Two highlights are Ukraine and Argentina, one of which has inherited some remnants of the Soviet space program and continues to make use of it, and one of which has benefited greatly from public-private cooperation and has separated itself from its peers across the Global South.</p>
+<p>To the far left, four historically powerful countries whose rocketry and satellite programs originated from the Cold War era as well as the cumulative power that is the European Space Agency differentiate themselves as <span class="math inline">\(1^{*}\)</span>.</p>
+<p>On the general right are space programs who are, across the board, less-funded and have a lower amount of output. To the far right is tier <span class="math inline">\(2\)</span>. These countries shouldn’t be overlooked, a many of them focus their lesser resources into well-honed specialties, such as Kazakhstan’s thriving launch industry, or Brazil’s specialization in environmental monitoring.</p>
+<p>Tier <span class="math inline">\(3\)</span> in teal consists of up-and-comers. The distinction of being in this grouping should be a proud one, as these programs have largely arisen from comparatively the fewest resources but have still escaped Earth’s atmosphere. These countries should be watched closely as prospective partners and many of their rises will be rapid.</p>
+<p>As a final visualization, take a look below at all of our countries, recontextualized with their regions and attributed “tiers” from the hierarchical clustering. Does it line up with what you might expect?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-79cbb6e0179c6e7039b2" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-79cbb6e0179c6e7039b2">{"x":{"visdat":{"5ab026c24503":["function () ","plotlyVisDat"]},"cur_data":"5ab026c24503","attrs":{"5ab026c24503":{"x":{},"y":{},"z":{},"text":{},"color":{},"colors":["#6cc6cc","#435fd1","#d1a836","#0a7d36","#8595d6","#daa2e8","#e64040","#8f7965","#59392b"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"text","size":[12],"textposition":"middle","hovertext":["ALCE","Algeria","Angola","Argentina","Australia","Austria","Azerbaijan","Bahrain","Bangladesh","Belarus","Belgium","Bolivia","Brazil","Burma","Canada","Chile","China","Colombia","Croatia","Czech Republic","Denmark","Egypt","ESA","Ethiopia","Ethiopia (2021)","Finland","France","Gabon","Germany","Ghana","Greece","Hungary","India","Indonesia","Iran","Israel","Italy","Japan","Kazakhstan","Kenya","Laos","Libya","Luxembourg","Malaysia","Mexico","Morocco","Netherlands","New Zealand","Nigeria","Norway","Oman","Pakistan","Philippines","Poland","Portugal","Qatar","Romania","Russia","Saudi Arabia","Singapore","Slovenia","South Africa","South Korea","Spain","Sweden","Switzerland","Taiwan","Thailand","Tunisia","Turkey","Turkmenistan","Ukraine","United Arab Emirates","United Kingdom","United States","Venezuela","Vietnam","Zimbabwe","Zimbabwe (2021)"],"hovertemplate":"<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"gridcolor":"rgb(255, 255, 255)","type":"log","zerolinewidth":1,"ticklen":5,"gridwidth":2,"title":"active_sats"},"yaxis":{"gridcolor":"rgb(255, 255, 255)","type":"log","zerolinewidth":1,"ticklen":5,"gridwith":2,"title":"budget_capita_usd"},"zaxis":{"gridcolor":"rgb(255, 255, 255)","zerolinewidth":1,"ticklen":5,"gridwith":2,"title":"interactivity"}},"paper_bgcolor":"rgb(243, 243, 243)","plot_bgcolor":"rgb(243, 243, 243)","hovermode":"x unified","hoverlabel":{"bgcolor":"rgba(243, 243, 243, 0.75)"},"showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[4,11,4,18,402,21,559,146,5,1,173,43,19,34,7,0,0,2,65,5,15,603],"y":[9.7137401540383017,28.552028799865347,7.0431955287437908,9.0494885262365035,21.28804446349325,12.452666498486378,58.330050358350242,28.570619330985917,3.1947342950209401,2.9874338833883387,35.325874538745389,281.78189276635078,21.135363433442155,35.314117544587305,2.0577759930821311,5.7133744186046513,3.347154945441746,6.1666105263157904,8.4171692291520674,12.480314928425358,28.955637272045966,21.74738100287448],"z":[2,3.7272727272727271,1.25,1.8333333333333333,2.4925373134328357,1.3333333333333333,2.4883720930232558,2.9657534246575343,5,2,2.3063583815028901,2.13953488372093,1.9473684210526316,3.1470588235294117,1.4285714285714286,0,0,2.5,3.5846153846153848,3.6000000000000001,1.3333333333333333,2.1509121061359866],"text":["<b>3<\/b>","<b>1<\/b>","<b>3<\/b>","<b>1<\/b>","<b>1*<\/b>","<b>1<\/b>","<b>1*<\/b>","<b>1<\/b>","<b>3<\/b>","<b>2<\/b>","<b>1<\/b>","<b>1<\/b>","<b>1<\/b>","<b>1<\/b>","<b>3<\/b>","<b>2<\/b>","<b>2<\/b>","<b>3<\/b>","<b>1<\/b>","<b>3<\/b>","<b>1<\/b>","<b>1*<\/b>"],"type":"scatter3d","mode":"text","textposition":["middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle"],"hovertext":["Austria","Belgium","Czech Republic","Denmark","ESA","Finland","France","Germany","Greece","Hungary","Italy","Luxembourg","Netherlands","Norway","Poland","Portugal","Romania","Slovenia","Spain","Sweden","Switzerland","United Kingdom"],"hovertemplate":["<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>"],"name":"ESA","marker":{"color":"rgba(67,95,209,1)","size":[12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12],"sizemode":"area","line":{"color":"rgba(67,95,209,1)"}},"textfont":{"color":"rgba(67,95,209,1)","size":12},"error_y":{"color":"rgba(67,95,209,1)","width":12},"error_x":{"color":"rgba(67,95,209,1)","width":12},"line":{"color":"rgba(67,95,209,1)","width":12},"frame":null},{"x":[581,112,19,14],"y":[7.7941027910142955,34.044761866019023,13.121751860850358,3.6064696212896621],"z":[0.11531841652323579,1.1517857142857142,2.3157894736842106,1.7857142857142858],"text":["<b>1<\/b>","<b>1<\/b>","<b>1<\/b>","<b>3<\/b>"],"type":"scatter3d","mode":"text","textposition":["middle","middle","middle","middle"],"hovertext":["China","Japan","South Korea","Taiwan"],"hovertemplate":["<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>"],"name":"East Asia","marker":{"color":"rgba(108,198,204,1)","size":[12,12,12,12],"sizemode":"area","line":{"color":"rgba(108,198,204,1)"}},"textfont":{"color":"rgba(108,198,204,1)","size":12},"error_y":{"color":"rgba(108,198,204,1)","width":12},"error_x":{"color":"rgba(108,198,204,1)","width":12},"line":{"color":"rgba(108,198,204,1)","width":12},"frame":null},{"x":[0,39,1,17,4,1,10,2],"y":[0.27885056780932926,2.6633962233169135,2.7235110121257113,0.27390554191137212,0.92327909176915801,0.25231739268680448,0.39456716417910448,0.92728117744610272],"z":[0,1.2564102564102564,1,2.1176470588235294,1.5,2,2,1],"text":["<b>2<\/b>","<b>1<\/b>","<b>2<\/b>","<b>3<\/b>","<b>3<\/b>","<b>2<\/b>","<b>3<\/b>","<b>2<\/b>"],"type":"scatter3d","mode":"text","textposition":["middle","middle","middle","middle","middle","middle","middle","middle"],"hovertext":["ALCE","Argentina","Bolivia","Brazil","Chile","Colombia","Mexico","Venezuela"],"hovertemplate":["<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>"],"name":"Latin America","marker":{"color":"rgba(209,168,54,1)","size":[12,12,12,12,12,12,12,12],"sizemode":"area","line":{"color":"rgba(209,168,54,1)"}},"textfont":{"color":"rgba(209,168,54,1)","size":12},"error_y":{"color":"rgba(209,168,54,1)","width":12},"error_x":{"color":"rgba(209,168,54,1)","width":12},"line":{"color":"rgba(209,168,54,1)","width":12},"frame":null},{"x":[5,0,4,1,0,3,0,1,13,1,13],"y":[2.2641901840490801,0.98636136408155894,0.95193843108141551,1.3254461159062885,1.1188322617680826,0.31871630510846749,5.7517430547681139,10.042491485809682,2.0863110377924414,0.81540801028057397,12.06664373493976],"z":[3,0,1.75,0,0,4.666666666666667,0,2,1,1,2.2307692307692308],"text":["<b>3<\/b>","<b>2<\/b>","<b>3<\/b>","<b>2<\/b>","<b>2<\/b>","<b>3<\/b>","<b>2<\/b>","<b>3<\/b>","<b>3<\/b>","<b>2<\/b>","<b>1<\/b>"],"type":"scatter3d","mode":"text","textposition":["middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle"],"hovertext":["Algeria","Bahrain","Egypt","Iran","Libya","Morocco","Oman","Qatar","Saudi Arabia","Tunisia","United Arab Emirates"],"hovertemplate":["<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>"],"name":"MENA","marker":{"color":"rgba(10,125,54,1)","size":[12,12,12,12,12,12,12,12,12,12,12],"sizemode":"area","line":{"color":"rgba(10,125,54,1)"}},"textfont":{"color":"rgba(10,125,54,1)","size":12},"error_y":{"color":"rgba(10,125,54,1)","width":12},"error_x":{"color":"rgba(10,125,54,1)","width":12},"line":{"color":"rgba(10,125,54,1)","width":12},"frame":null},{"x":[0,30,10],"y":[7.8862728380024363,10.823151652173914,0.039221895043731775],"z":[0,0.90000000000000002,2.1000000000000001],"text":["<b>2<\/b>","<b>1<\/b>","<b>3<\/b>"],"type":"scatter3d","mode":"text","textposition":["middle","middle","middle"],"hovertext":["Croatia","Israel","Turkey"],"hovertemplate":["<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>"],"name":"Non-ESA","marker":{"color":"rgba(133,149,214,1)","size":[12,12,12],"sizemode":"area","line":{"color":"rgba(133,149,214,1)"}},"textfont":{"color":"rgba(133,149,214,1)","size":12},"error_y":{"color":"rgba(133,149,214,1)","width":12},"error_x":{"color":"rgba(133,149,214,1)","width":12},"line":{"color":"rgba(133,149,214,1)","width":12},"frame":null},{"x":[14,70,87,4050],"y":[12.610153019961366,12.813928873239437,3.8164918931583882,182.60964109857144],"z":[2.0714285714285716,1.7857142857142858,1.1724137931034482,0.50567901234567902],"text":["<b>1<\/b>","<b>1<\/b>","<b>1<\/b>","<b>1*<\/b>"],"type":"scatter3d","mode":"text","textposition":["middle","middle","middle","middle"],"hovertext":["Australia","Canada","New Zealand","United States"],"hovertemplate":["<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>"],"name":"North America/Oceania","marker":{"color":"rgba(218,162,232,1)","size":[12,12,12,12],"sizemode":"area","line":{"color":"rgba(218,162,232,1)"}},"textfont":{"color":"rgba(218,162,232,1)","size":12},"error_y":{"color":"rgba(218,162,232,1)","width":12},"error_x":{"color":"rgba(218,162,232,1)","width":12},"line":{"color":"rgba(218,162,232,1)","width":12},"frame":null},{"x":[2,2,6,911,1,28],"y":[7.6943244232881725,4.3892781117138249,6.5598120406854923,24.451253659359192,8.6063774043776249,2.2329168815592202],"z":[3,1.5,1.6666666666666667,1.4094401756311745,4,3.3214285714285716],"text":["<b>3<\/b>","<b>2<\/b>","<b>3<\/b>","<b>1*<\/b>","<b>3<\/b>","<b>1<\/b>"],"type":"scatter3d","mode":"text","textposition":["middle","middle","middle","middle","middle","middle"],"hovertext":["Azerbaijan","Belarus","Kazakhstan","Russia","Turkmenistan","Ukraine"],"hovertemplate":["<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>"],"name":"Post-Soviet","marker":{"color":"rgba(230,64,64,1)","size":[12,12,12,12,12,12],"sizemode":"area","line":{"color":"rgba(230,64,64,1)"}},"textfont":{"color":"rgba(230,64,64,1)","size":12},"error_y":{"color":"rgba(230,64,64,1)","width":12},"error_x":{"color":"rgba(230,64,64,1)","width":12},"line":{"color":"rgba(230,64,64,1)","width":12},"frame":null},{"x":[1,0,260,7,1,3,3,1,11,7,5],"y":[0.11217987028585155,0.22306283607312954,1.3947374590680102,0.70114608579088467,2.2891949017525226,0.32761892761394101,0.13481571059431524,0.33375670050761425,5.1340856423173804,0.9497942676418264,0.3591290630975143],"z":[5,0,1,1.7142857142857142,1,2,1,1,1.7272727272727273,2,2],"text":["<b>3<\/b>","<b>2<\/b>","<b>1<\/b>","<b>3<\/b>","<b>2<\/b>","<b>3<\/b>","<b>2<\/b>","<b>2<\/b>","<b>3<\/b>","<b>3<\/b>","<b>3<\/b>"],"type":"scatter3d","mode":"text","textposition":["middle","middle","middle","middle","middle","middle","middle","middle","middle","middle","middle"],"hovertext":["Bangladesh","Burma","India","Indonesia","Laos","Malaysia","Pakistan","Philippines","Singapore","Thailand","Vietnam"],"hovertemplate":["<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>"],"name":"South Asia","marker":{"color":"rgba(143,121,101,1)","size":[12,12,12,12,12,12,12,12,12,12,12],"sizemode":"area","line":{"color":"rgba(143,121,101,1)"}},"textfont":{"color":"rgba(143,121,101,1)","size":12},"error_y":{"color":"rgba(143,121,101,1)","width":12},"error_x":{"color":"rgba(143,121,101,1)","width":12},"line":{"color":"rgba(143,121,101,1)","width":12},"frame":null},{"x":[0,2,2,0,0,1,3,6,1,1],"y":[0.92749198813056388,0.1907701214953271,0.086440539083557963,0.61084990202482037,0.33717722729868649,0.056621940163191296,0.5155002268602541,2.8287511217183772,0.4467178056717806,1.6107218611209024],"z":[0,1,0,0,0,0,1.6666666666666667,1,0,0],"text":["<b>2<\/b>","<b>2<\/b>","<b>2<\/b>","<b>2<\/b>","<b>2<\/b>","<b>2<\/b>","<b>3<\/b>","<b>3<\/b>","<b>2<\/b>","<b>2<\/b>"],"type":"scatter3d","mode":"text","textposition":["middle","middle","middle","middle","middle","middle","middle","middle","middle","middle"],"hovertext":["Angola","Ethiopia","Ethiopia (2021)","Gabon","Ghana","Kenya","Nigeria","South Africa","Zimbabwe","Zimbabwe (2021)"],"hovertemplate":["<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>","<b>%{hovertext}<\/b><br><br> Active satellites: %{x:,}<br> Space budget per capita (USD): %{y:$,.2f}<br> Collaborations per satellite: %{z:,.2f} <extra><\/extra>"],"name":"Sub-Saharan","marker":{"color":"rgba(89,57,43,1)","size":[12,12,12,12,12,12,12,12,12,12],"sizemode":"area","line":{"color":"rgba(89,57,43,1)"}},"textfont":{"color":"rgba(89,57,43,1)","size":12},"error_y":{"color":"rgba(89,57,43,1)","width":12},"error_x":{"color":"rgba(89,57,43,1)","width":12},"line":{"color":"rgba(89,57,43,1)","width":12},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="./about.html">About</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="https://github.com/twcrockett">GitHub</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="./contact.html">Contact me</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="https://github.com/twcrockett/twcrockett.github.io">Last updated 11 April 2023</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
