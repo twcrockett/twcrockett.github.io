@@ -1,0 +1,52 @@
+---
+title: "Simple ggplot exercise"
+author: "Taylor Crockett"
+description-title: "EPPS 6323"
+date: "8 Feb 2023"
+format: 
+  html:
+    code-fold: true
+---
+
+@fig-Tondu is a brief comparison of Tsai Ing-Wen voters and non-voters on their sentiments about Taiwanese independence.
+
+```{r}
+#| label: fig-Tondu
+#| fig-cap: Position on Taiwanese independence respective of Tsai vote.
+#| warning: false
+
+library(haven)
+library(ggplot2)
+library(devtools)
+library(dplyr)
+
+TEDS_2016 <- read_stata("https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true")
+
+Tondulab <- "Position on unification and independence"
+
+TEDS_2016$Tondu <- factor(TEDS_2016$Tondu, levels=c(1,2,3,4,5,6,9), 
+                          labels=c("Unification now", 
+                                   "Status quo, unif. in future", 
+                                   "Status quo, decide later", 
+                                   "Status quo forever", 
+                                   "Status quo, indep. in future", 
+                                   "Independence now", 
+                                   "No response"))
+
+TEDS_Tsai <- filter(TEDS_2016, votetsai==1)
+TEDS_noTsai <- filter(TEDS_2016, votetsai==0)
+TEDS_NATsai <- filter(TEDS_2016, is.na(votetsai))
+
+
+ggplot(data=TEDS_2016, aes(x=x)) +
+  geom_bar(data=TEDS_Tsai, aes(x = Tondu), 
+                 fill="#00A36C") +
+  geom_bar(data=TEDS_noTsai, aes(x = Tondu), 
+                 fill= "#404080") +
+  geom_bar(data=TEDS_NATsai, aes(x = Tondu), 
+                 fill= "#808080") +
+  xlab(Tondulab) + ylab("Count") + 
+  theme(axis.text.x=element_text(angle=30,hjust=1) )
+```
+
+------------------------------------------------------------------------

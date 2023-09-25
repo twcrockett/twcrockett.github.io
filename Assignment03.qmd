@@ -1,0 +1,192 @@
+---
+title: "Taiwanese independence sentiments in 2016: boxplot and PCA"
+author: "Taylor Crockett"
+description-title: "EPPS 6323"
+date: "8 Mar 2023"
+format: 
+  html:
+    code-fold: true
+---
+
+The original assignment consisted of a regression nomogram of Taiwanese independence sentiments in 2016, referred to as *Tondu*, against named variables. I chose to remove non-respondents, which can be optionally reinstated in the code below.
+
+## Boxplot
+
+Since this method was assigned to the students to realize it was flawed from the start, I decided to create a grouped boxplot, @fig-boxplot, to visualize the same data. I scaled age, education, and income levels to the same metric, $n$, to reflect their rough distribution across different poll answers.
+
+```{r}
+#| label: fig-boxplot
+#| fig-cap: Tondu boxplot
+#| warning: false
+
+# library(regplot)
+library(reshape2)
+library(tidyverse)
+library(tidymodels)
+library(plotly)
+library(haven)
+
+TEDS_2016 <- read_stata("https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true")
+
+# opt. remove non-responses before relabelling
+TEDS_2016 <- filter(TEDS_2016, Tondu < 8)
+
+TEDS_2016$Tondu <- factor(TEDS_2016$Tondu, levels=c(1,2,3,4,5,6,9), 
+                          labels=c("Unification now", 
+                                   "Status quo, unif. in future", 
+                                   "Status quo, decide later", 
+                                   "Status quo forever", 
+                                   "Status quo, indep. in future", 
+                                   "Independence now", 
+                                   "No response"))
+
+
+newvars <- c("Tondu", "female", "DPP", "age", "income", "edu", "Taiwanese", "Econ_worse")
+TEDS_subs <- TEDS_2016[complete.cases(TEDS_2016[ , newvars]), ]
+
+
+# lm.fit=lm(Tondu~age+edu+income, data=TEDS_subs)
+# summary(lm.fit)
+# regplot(lm.fit)
+
+# thank you plotly for teaching me
+#  -- learning how to use '%>%' from dplyr here
+# ditching the linear regression per the assignment
+# i think a boxplot model is much prettier for Tondu data
+# leaving linnmodel here for posterity's sake
+# _____________________________________________
+# lm_model1 <- linear_reg() %>% 
+#   set_engine('lm') %>% 
+#   set_mode('regression') %>%
+#   fit(Tondu ~ age, data = TEDS_subs) 
+# 
+# y <- TEDS_subs$Tondu
+# x1 <-TEDS_subs$age
+# 
+# x1_range <- seq(min(x1), max(x1), length.out = 100)
+# x1_range <- matrix(x1_range, nrow=100, ncol=1)
+# x1df <- data.frame(x1_range)
+# colnames(x1df) <- c('age')
+# 
+# y1df <- lm_model1 %>% predict(x1df)
+# 
+# colnames(y1df) <- c('Tondu')
+# xy1 <- data.frame(x1df, y1df) 
+# 
+# fig <- plot_ly(TEDS_subs, x = ~Tondu, y = ~age, type = 'scatter', alpha = 0.65, mode = 'markers', name = 'Age')
+# fig <- fig %>% add_trace(data = xy1, x = ~Tondu, y = ~age, name = 'Regression Fit', mode = 'lines', alpha = 1)
+# fig
+
+# Now we look at grouped boxplots
+# ________________________________
+
+# fig <- plot_ly(TEDS_subs, x = ~Tondu, y = ~age, type = "box")
+# fig
+
+# At this point I realized that displaying Tondu against different variables 
+# wouldn't work because the y-axes would be different (possible but clunky)
+
+# Going to scale age, income, edu on same scale from 0, 10
+# If necessary using maximum absolute method (x/max(x))
+
+TEDS_subs['age'] <- apply(TEDS_subs['age'], 2, function(x) 10*x/max(x))
+TEDS_subs['edu'] <- apply(TEDS_subs['edu'], 2, function(x) 2*x)
+
+# I found no other way to go about this but to jankily
+# rip apart my existing df, pull "age" "edu" and "income"
+# individually, then force it all back together in a
+# single long-form
+
+TEDS_age <- TEDS_subs[c('age', 'Tondu')]
+TEDS_age <- TEDS_age %>% rename("n" = "age") %>% mutate(type="Age")
+
+TEDS_edu <- TEDS_subs[c('edu', 'Tondu')]
+TEDS_edu <- TEDS_edu %>% rename("n" = "edu") %>% mutate(type="Education")
+
+TEDS_income <- TEDS_subs[c('income', 'Tondu')]
+TEDS_income <- TEDS_income %>% rename("n" = "income") %>% mutate(type="Income")
+
+TEDS_plot <- rbind(TEDS_age, TEDS_edu, TEDS_income)
+
+fig <- plot_ly(TEDS_plot, x = ~Tondu, y = ~n, color = ~type, type = "box")
+fig <- fig %>% layout(boxmode = "group")
+fig
+
+```
+
+------------------------------------------------------------------------
+
+## 3D visualization of data
+
+Obviously, age, income level and education level are intricately related. Comparing them on one shared axis is inconclusive. A further analysis involving principal component analysis would give a much clearer picture on how each variable independently relates to the *Tondu* answers. @fig-3D is a 3D plot showing the responses we are observing.
+
+```{r}
+#| label: fig-3D
+#| fig-cap: Tondu 3D
+#| warning: false
+
+TEDS_2016 <- read_stata("https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true")
+
+# opt. remove non-responses before relabelling
+TEDS_2016 <- filter(TEDS_2016, Tondu < 8)
+
+TEDS_2016$Tondu <- factor(TEDS_2016$Tondu, levels=c(1,2,3,4,5,6,9), 
+                          labels=c("Unification now", 
+                                   "Status quo, unif. in future", 
+                                   "Status quo, decide later", 
+                                   "Status quo forever", 
+                                   "Status quo, indep. in future", 
+                                   "Independence now", 
+                                   "No response"))
+
+
+newvars <- c("Tondu", "female", "DPP", "age", "income", "edu", "Taiwanese", "Econ_worse")
+TEDS_subs <- TEDS_2016[complete.cases(TEDS_2016[ , newvars]), ]
+
+fig <- plot_ly(TEDS_subs, x = ~age, y = ~income, z = ~edu, color = ~Tondu) %>%
+  add_markers(size = 12)
+fig
+```
+
+## PCA
+
+To accomplish the PCA, I assigned Tondu answers on their own scale, $t$, where $t=1$ indicates strong reunification sentiment and $t=5$ indicates strong independence sentiment. Note that while these two ideas are opposed, further analysis should consider $t=3$ "pro-status quo" to be strong and oppositional in its own right.
+
+Below is a principal component analysis on age, education and income.
+
+```{r}
+#| label: fig_pca
+#| fig-cap: Tondu PCA
+#| warning: false
+
+library(naivebayes)
+library(plotly)
+library(dplyr)
+library(psych)
+library(tidyverse)
+library(factoextra)
+library(RColorBrewer)
+
+TEDS_2016 <- read_stata("https://github.com/datageneration/home/blob/master/DataProgramming/data/TEDS_2016.dta?raw=true")
+
+# opt. remove non-responses before relabelling
+TEDS_2016 <- filter(TEDS_2016, Tondu < 8)
+
+newvars <- c("Tondu", "female", "DPP", "age", "income", "edu", "Taiwanese", "Econ_worse")
+TEDS_subs <- TEDS_2016[complete.cases(TEDS_2016[ , newvars]), ]
+
+TEDS_PCA <- TEDS_subs[c("Tondu", "age", "edu", "income")]
+TEDS_PCA$Tondu <- ifelse(TEDS_PCA$Tondu > 3,
+                  TEDS_PCA$Tondu-1,
+                  TEDS_PCA$Tondu)
+
+pr.mas=prcomp(TEDS_PCA, scale=TRUE)
+
+fviz_pca_biplot(pr.mas, label="var", col.var="firebrick1")
+```
+
+## Further exploration of data
+
+I thought about visualizing a 3-dimensional PCA to see if categorization without factoring in Tondu arose, but found that relying on only 3 variables (age, education, income) made increasing components unnecessary: the total explained variance was already plenty high and the resulting visualization was just a slop. Technically addressing more parts of the Tondu polling data was outside the scope of the initial assignment, but perhaps I'll readdress it with more variables another time, as well as reintroducing Tondu into the PCA on its 1:5 scale. That's all for now.
+
+*-- 8 Mar*

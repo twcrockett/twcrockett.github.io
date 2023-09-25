@@ -1,0 +1,7 @@
+---
+title: "Curriculum Vitae"
+---
+
+  <object data="TCrockett_CV_2023.pdf" type="application/pdf" width="100%" height="800px">
+      <p>Unable to display .pdf file. Download it <a href="https://twcrockett.github.io/TCrockett_CV_2023.pdf">here</a> instead.</p>
+  </object>

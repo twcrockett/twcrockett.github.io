@@ -1,0 +1,25 @@
++--------------------------------------------------------------------+------------------------------------------------------+
+| ##### Academic purposes:                                           | ##### Other inquiries:                               |
+|                                                                    |                                                      |
+| [taylorcrockett\@utdallas.edu](mailto:taylorcrockett@utdallas.edu) | [twc.rocket\@gmail.com](mailto:twc.rocket@gmail.com) |
++--------------------------------------------------------------------+------------------------------------------------------+
+
++----------------------------------------------------------------------------------------------------------------------------------------+
+| ##### Twitter status (subject to change):                                                                                              |
+|                                                                                                                                        |
+| <blockquote class="twitter-tweet">                                                                                                     |
+|                                                                                                                                        |
+| <p lang="en" dir="ltr">                                                                                                                |
+|                                                                                                                                        |
+| I'm officially leaving Twitter. i spend entirely too much time on here. Take care everyone. I'll be back in 15 minutes.                |
+|                                                                                                                                        |
+| </p>                                                                                                                                   |
+|                                                                                                                                        |
+| --- liddy ☆ 🎪 (@pr1ncette) <a href="https://twitter.com/pr1ncette/status/1298271007405248526?ref_src=twsrc%5Etfw">August 25, 2020</a> |
+|                                                                                                                                        |
+| </blockquote>                                                                                                                          |
++----------------------------------------------------------------------------------------------------------------------------------------+
+
+```{=html}
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+```

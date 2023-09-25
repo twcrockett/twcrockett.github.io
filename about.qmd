@@ -1,0 +1,7 @@
+---
+title: "About"
+---
+
+This website was created with Quarto using RStudio.
+
+![](meowhacking.gif){fig-alt="Gif of a cat approving pull requests" width="150"}

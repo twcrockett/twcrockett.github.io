@@ -1,0 +1,11 @@
+---
+title: "Space Silk Road (2021)"
+---
+
+A 2021 case study on "developing space powers," which we now call "emerging space powers" as to avoid harmful connotations.
+
+<object data="SpaceSilkRoad_v2021.pdf" type="application/pdf" width="100%" height="800px">
+
+<p>Unable to display .pdf file. Download it <a href="https://twcrockett.github.io/SpaceSilkRoad_v2021.pdf">here</a> instead.</p>
+
+</object>

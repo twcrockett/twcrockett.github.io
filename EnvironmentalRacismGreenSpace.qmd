@@ -1,0 +1,11 @@
+---
+title: "Environmental Racism and Green Space (2022)"
+---
+
+This paper was a major catalyst in me wanting to learn GIS and better my understanding of data analysis. At a future date I want to revisit this research with the tools I now have (instead of using MS Paint to draw borders in a .png file...yikes).
+
+<object data="EnvRacism_Spr2022.pdf" type="application/pdf" width="100%" height="800px">
+
+<p>Unable to display .pdf file. Download it <a href="https://twcrockett.github.io/EnvRacism_Spr2022.pdf">here</a> instead.</p>
+
+</object>

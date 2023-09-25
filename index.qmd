@@ -1,0 +1,36 @@
+<div>
+
+::: {style="float: left; position: relative; top: 0px; padding-right: 15px; width: 200px; height: 200px;"}
+![](headshot_cropped.png){fig-alt="Taylor Crockett"}
+:::
+
+::: {style="padding-top: 15px; padding-bottom: 15px;"}
+This is the website of Taylor Crockett, to demonstrate research and projects. You can find my CV on the top menu bar.
+
+I am an undergraduate student at the University of Texas at Dallas (B.S. International Political Economy, grad. May 2023) and fast-tracked graduate student (M.S. Social Data Analytics and Research).
+:::
+
+</div>
+
+### Research
+
+##### Developing space powers
+
+Most current research involves work about "developing space powers" (DSPs), or countries with burgeoning space programs, and how and where their development places them in regard to the space economy and international relations. This research is pending later publication.
+
+##### Space Silk Road
+
+Previous research on this topic focused on the battle of influence between China and the US: how declining US interest, especially during the Trump presidency, led smaller satellite-operating countries to seek Chinese resources under the umbrella of the Belt and Road Initiative. The paper, as was presented at the WPSA and SPSA conferences in 2022, can be found [here](https://twcrockett.github.io/SpaceSilkRoad_v2021.pdf).
+
+### Interests
+
+-   Data science
+-   International relations
+-   International political economy
+-   Mapping and environmental research
+-   Policy
+    -   Space policy
+    -   Urban planning/policy
+    -   Environmental policy
+
+### [Contact me](contact.qmd)
