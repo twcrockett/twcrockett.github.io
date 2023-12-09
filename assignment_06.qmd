@@ -1,0 +1,47 @@
+---
+title: "EPPS 6302: Assignment 6"
+description-title: "Asyncio"
+format: 
+  html:
+    code-fold: true
+    toc-depth: 2
+---
+
+I believe in Python supremacy, so here's a simple example of one of the methods I use to scrape or download in parallel instances: the asyncio package. It's not let me down thus far.
+
+```{python example, echo = T, output = F}
+
+import asyncio
+import aiohttp
+import aiosqlite
+
+async def download_pdf(session, url):
+    async with session.get(url) as response:
+        if response.status == 200:
+            return await response.read()
+        else:
+            raise Exception(f"Error downloading {url}")
+
+async def save_pdf_to_db(db, url, data):
+    async with db.execute("INSERT INTO pdfs (url, content) VALUES (?, ?)", (url, data)):
+        await db.commit()
+
+async def main(urls):
+    async with aiohttp.ClientSession() as session:
+        # Create database and table
+        db = await aiosqlite.connect("pdf_database.db")
+        await db.execute("CREATE TABLE IF NOT EXISTS pdfs (url TEXT, content BLOB)")
+
+        tasks = []
+        for url in urls:
+            task = asyncio.create_task(download_pdf(session, url))
+            tasks.append(task)
+
+        pdf_contents = await asyncio.gather(*tasks)
+
+        for url, content in zip(urls, pdf_contents):
+            await save_pdf_to_db(db, url, content)
+
+        await db.close()
+
+```

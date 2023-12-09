@@ -1,0 +1,42 @@
+---
+title: "EPPS 6302: Assignment 2"
+subtitle: "Google Trends"
+format: 
+  html:
+    code-fold: true
+    toc-depth: 2
+include-before-body:
+  text: |
+    <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3523_RC02/embed_loader.js"></script> 
+---
+
+Google Trends lets users decide between using "search terms" and "topics," but what's the difference?
+
+::: grid
+::: g-col-6
+### Using search terms
+
+```{=html}
+<script type="text/javascript"> trends.embed.renderExploreWidget("TIMESERIES", {"comparisonItem":[{"keyword":"Biden","geo":"US","time":"today 12-m"},{"keyword":"Trump","geo":"US","time":"today 12-m"},{"keyword":"election","geo":"US","time":"today 12-m"}],"category":0,"property":""}, {"exploreQuery":"geo=US&q=Biden,Trump,election&hl=en&date=today 12-m,today 12-m,today 12-m","guestPath":"https://trends.google.com:443/trends/embed/"}); </script>
+```
+:::
+
+::: g-col-6
+### Using topics
+
+```{=html}
+<script type="text/javascript"> trends.embed.renderExploreWidget("TIMESERIES", {"comparisonItem":[{"keyword":"/m/012gx2","geo":"US","time":"today 12-m"},{"keyword":"/m/0cqt90","geo":"US","time":"today 12-m"},{"keyword":"election","geo":"US","time":"today 12-m"}],"category":0,"property":""}, {"exploreQuery":"geo=US&q=%2Fm%2F012gx2,%2Fm%2F0cqt90,election&hl=en&date=today 12-m,today 12-m,today 12-m","guestPath":"https://trends.google.com:443/trends/embed/"}); </script>
+```
+:::
+:::
+
+### Animals, cars and football
+
+"Search terms" are single keywords, while "topics" are a group of keywords that Google curates as a better measure of true popularity. The difference in quality can be very pronounced when investigating non-distinct or very niche topics.
+
+```{=html}
+<script type="text/javascript"> trends.embed.renderExploreWidget("TIMESERIES", {"comparisonItem":[{"keyword":"jaguar","geo":"US","time":"today 1-m"},{"keyword":"/m/0449p","geo":"US","time":"today 1-m"},{"keyword":"/m/0h5wslk","geo":"US","time":"today 1-m"},{"keyword":"/m/043vc","geo":"US","time":"today 1-m"}],"category":0,"property":""}, {"exploreQuery":"date=today%201-m&geo=US&q=jaguar,%2Fm%2F0449p,%2Fm%2F0h5wslk,%2Fm%2F043vc&hl=en","guestPath":"https://trends.google.com:443/trends/embed/"}); </script>
+```
+::: column-margin
+Search term "jaguar" compared to topics "Jaguar (Animal)", "Jaguar (Car make)", "Jacksonville Jaguars (Football team)"
+:::

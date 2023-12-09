@@ -1,6 +1,5 @@
 ---
 title: "How I clustered space program data"
-author: "Taylor Crockett"
 date: 09/22/2023
 format: html
 editor: visual
@@ -82,6 +81,10 @@ import <- read_excel("C:/Users/twcro/Documents/GitHub/SpaceSilkRoad/agency_budge
 df <- import %>%
   select(-region)
 ```
+
+::: column-margin
+As you can see, this was long before I had learned tidyverse.
+:::
 
 And here are the first few lines of what we're dealing with!
 
@@ -432,7 +435,7 @@ Four-tiered structure:
 
 This leaves us with four clear divisions between space programs. What exactly, can we conclude?
 
-First of all, a disclaimer: not much. There's a tenet of "garbage in, garbage out" when it comes to unsupervised learning methods. Our initial dataset was both comprehensive and limited. The budget data and satellite data covered many countries, but we importantly lack futher variables. A space program shouldn't be defined only by "number of satellites" and "amount of budget." The data was also flawed in the sense that budget data is entirely dependent on accessible. While some governments are forthcoming and transparent with their data, many don't even have an official website for their space program. We relied on consultant estimates for many of the programs, which is less than reliable going forward.
+First of all, a disclaimer: not much. There's a tenet of "garbage in, garbage out" when it comes to unsupervised learning methods. Our initial dataset was both comprehensive and limited. The budget data and satellite data covered many countries, but we importantly lack further variables. A space program shouldn't be defined only by "number of satellites" and "amount of budget." The data was also flawed in the sense that budget data is entirely dependent on accessible. While some governments are forthcoming and transparent with their data, many don't even have an official website for their space program. We relied on consultant estimates for many of the programs, which is less than reliable going forward.
 
 Second of all, a point of optimism: a lot. It's important to approach quantitative methods qualitatively. Based on existing knowledge about space programs, the results line up! Even the surprises are pretty easy to explain. Did you know that France has the biggest satellite industry outside of Russia and the United States? What we can draw from these clustering methods needs an asterisk that this was to explore methodology rather than draw definite conclusions.
 

@@ -16,10 +16,26 @@ website:
           text: "How I clustered space program data"
       - text: "Projects"
         menu:
-        - href: https://twcrockett.github.io/TXelection_4317
-          text: "2022 Texas Gubernatorial Election (2022)—broken right now 😢" 
+        # - href: https://twcrockett.github.io/TXelection_4317
+        #   text: "2022 Texas Gubernatorial Election (2022)—broken right now 😢" 
         - href: LunarPhases.qmd
           text: "Lunar Phases and Fatal Crashes"
+      - text: "EPPS 6302 (Fall 2023)"
+        menu: 
+          - href: assignment_01.qmd
+            text: "Assignment 1"
+          - href: assignment_02.qmd
+            text: "Assignment 2"   
+          - href: assignment_03.qmd
+            text: "Assignment 3"
+          - href: assignment_05.qmd
+            text: "Assignment 5"
+          - href: assignment_06.qmd
+            text: "Assignment 6"
+          - href: assignment_07.qmd
+            text: "Assignment 7"
+          - href: assignment_08.qmd
+            text: "Assignment 8"         
       - text: "Expanded classwork"
         menu:
         - href: EnvironmentalRacismGreenSpace.qmd

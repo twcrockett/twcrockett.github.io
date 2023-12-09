@@ -1,0 +1,107 @@
+---
+title: "EPPS 6302: Assignment 3"
+subtitle: "Analysis of Twitter Data: Biden-Xi Summit"
+format: 
+  html:
+    code-fold: true
+    toc-depth: 2
+---
+
+## Introduction
+
+This assignment aims to analyze Twitter data related to the President Biden and Xi summit in November 2021. We will explore public sentiment, popular hashtags, and user engagement through various text analysis techniques.
+
+## Data Loading and Preparation
+
+```{r}
+library(quanteda)
+library(quanteda.textmodels)
+library(quanteda.textplots)
+library(readr)
+library(ggplot2)
+library(knitr)
+library(tidyverse)
+
+# Load the data
+summit <- read_csv("https://raw.githubusercontent.com/datageneration/datamethods/master/textanalytics/summit_11162021.csv")
+
+# Display the data
+kable(head(summit))
+```
+
+## Latent Semantic Analysis (LSA)
+
+Latent Semantic Analysis helps us understand underlying themes.
+
+```{r}
+sum_twt = summit$text
+toks = tokens(sum_twt)
+sumtwtdfm <- dfm(toks)
+
+# Perform LSA
+sum_lsa <- textmodel_lsa(sumtwtdfm)
+
+# Plot LSA results
+lsa_dim1 <- sum_lsa$docs[,1]
+lsa_dim2 <- sum_lsa$docs[,2]
+
+plot(lsa_dim1, lsa_dim2, xlab = "LSA Dimension 1", ylab = "LSA Dimension 2", main = "LSA of Summit Tweets", pch = 20)
+
+```
+
+## Hashtag Analysis
+
+Analyzing the most popular hashtags.
+
+```{r}
+tweet_dfm <- tokens(sum_twt, remove_punct = TRUE) %>%
+  dfm()
+tag_dfm <- dfm_select(tweet_dfm, pattern = "#*")
+# Extract top 50 hashtags
+top_hashtags <- topfeatures(tag_dfm, 25)
+
+# Convert to data frame for plotting
+df_hashtags <- data.frame(
+  hashtag = names(top_hashtags),
+  frequency = top_hashtags
+)
+
+# Plot the bar graph
+ggplot(df_hashtags, aes(x = reorder(hashtag, frequency), y = frequency)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +  # Flips the axes for easier reading
+  labs(title = "Top 25 Hashtags", x = "Hashtag", y = "Frequency") +
+  theme_minimal()
+
+```
+
+## Hashtag Network Analysis
+
+Visualizing how different hashtags are related.
+
+```{r}
+tweet_dfm <- tokens(sum_twt, remove_punct = TRUE) %>%
+  dfm()
+
+# Create a network plot of hashtags
+tag_fcm <- fcm(dfm_select(tweet_dfm, pattern = "#*"))
+toptag <- names(topfeatures(dfm_select(tweet_dfm, pattern = "#*"), 50))
+
+topgat_fcm <- fcm_select(tag_fcm, pattern = toptag)
+textplot_network(topgat_fcm, min_freq = 50, edge_alpha = 0.8, edge_size = 5)
+
+```
+
+## User Mention Analysis
+
+Analyzing the most frequently mentioned users.
+
+```{r}
+# Extract user mentions
+user_dfm <- dfm_select(tweet_dfm, pattern = "@*")
+topuser <- names(topfeatures(user_dfm, 50))
+user_fcm <- fcm(user_dfm)
+user_fcm <- fcm_select(user_fcm, pattern = topuser)
+textplot_network(user_fcm, min_freq = 10, edge_color = "#e05248", edge_alpha = 0.8, edge_size = 5)
+
+```

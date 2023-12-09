@@ -1,0 +1,156 @@
+---
+title: "EPPS 6302: Assignment 8"
+subtitle: "Census Data in R"
+format: 
+  html:
+    code-fold: true
+    toc: false
+---
+
+What changed in Texas between 2010 and 2020?
+
+```{r setup, output = F}
+library(tidycensus)
+library(tidyverse)
+library(leaflet)
+library(scales)
+
+
+data_2010 <- get_acs(geography = "place", 
+                            variables = c(population ="B01001_001", median_income = "B07011_001"),
+                            year = 2010, 
+                            state = "TX", 
+                            survey = "acs5") %>%
+  mutate(year = 2010)
+
+data_2020 <- get_acs(geography = "place", 
+                     variables = c(population ="B01001_001", median_income = "B07011_001"),
+                     year = 2020, 
+                     state = "TX", 
+                     survey = "acs5", 
+                     geometry = T) %>%
+  mutate(year = 2020)
+
+data <- bind_rows(data_2010, sf::st_drop_geometry(data_2020))
+change <- data %>% 
+  mutate(variable = paste0(variable, "_", year)) %>%
+  select(-moe, -year) %>%
+  pivot_wider(names_from = variable, values_from = estimate) %>%
+  mutate(median_income_2010 = median_income_2010 * 1.1905,
+         pop_change = (population_2020 - population_2010) / population_2010,
+         inc_change = (median_income_2020 - median_income_2010) / median_income_2010,
+         pop_change = ifelse(pop_change == Inf, NA, pop_change),
+         inc_change = ifelse(inc_change == Inf, NA, inc_change),
+         pop_change_color = case_when(
+           pop_change >= 2.5 ~ 2.49,
+           T ~ pop_change
+         ),
+         inc_change_color = case_when(
+           inc_change >= 2.5 ~ 2.49,
+           T ~ inc_change
+         )) %>%
+  left_join(data_2020 %>% select(GEOID, geometry), by = "GEOID") %>%
+  sf::st_as_sf()
+
+## Make vector of colors for values smaller than 0 (20 colors)
+rc1 <- colorRampPalette(colors = c("#3c23a8", "#dadada"), space = "Lab")(50)
+
+## Make vector of colors for values larger than 0 (180 colors)
+rc2 <- colorRampPalette(colors = c("#dadada", "#ed851c"), space = "Lab")(125)
+
+## Combine the two color palettes
+rampcols <- c(rc1, rc2)
+
+colorPalette <- colorNumeric(
+    palette = rampcols, 
+    domain = c(-1, 2.5),
+    na.color = "#ffffff"
+)
+
+## Make vector of colors for values smaller than 0 (20 colors)
+rc1.2 <- colorRampPalette(colors = c("#b32315", "#dadada"), space = "Lab")(100)
+
+## Make vector of colors for values larger than 0 (180 colors)
+rc2.2 <- colorRampPalette(colors = c("#dadada", "#02c72d"), space = "Lab")(200)
+
+## Combine the two color palettes
+rampcols.2 <- c(rc1.2, rc2.2)
+
+colorPalette2 <- colorNumeric(
+    palette = rampcols.2, 
+    domain = c(-1, 2),
+    na.color = "#ffffff"
+)
+
+```
+
+
+::: column-screen
+
+::: columns
+
+::: {.column width="4%"}
+
+:::
+
+::: {.column width="92%"}
+
+# Changes from 2010 to 2020 (ACS 5)
+
+:::
+
+::: {.column width="4%"}
+
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="44%"}
+### Population
+
+```{r map1, warning=F}
+
+leaflet(change) %>% 
+    addProviderTiles(providers$CartoDB.Positron) %>%  # Lighter, more professional background
+    addPolygons(
+        fillColor = ~colorPalette(pop_change_color),
+        weight = 0.4,
+        color = "white",
+        fillOpacity = 0.8,
+        popup = ~paste(NAME,"<br><br> 2020 Population: <b>", comma(population_2020), 
+                       "</b><br> Population Change from 2010: <b>", percent(pop_change, accuracy = 0.1),
+                       "</b><br> Median Income Change: <b>", percent(inc_change, accuracy = 0.1), "</b>")
+    )
+
+```
+:::
+
+::: {.column width="4%"}
+
+:::
+
+::: {.column width="44%"}
+### Median Income (inflation-adjusted)
+
+```{r map2, warning=F}
+
+leaflet(change) %>% 
+    addProviderTiles(providers$CartoDB.Positron) %>%  # Lighter, more professional background
+    addPolygons(
+        fillColor = ~colorPalette2(inc_change_color),
+        weight = 0.4,
+        color = "white",
+        fillOpacity = 0.8,
+        popup = ~paste(NAME,"<br><br> 2020 Population: <b>", comma(population_2020), 
+                       "</b><br> 2020 Median Income: <b>", dollar(median_income_2020),
+                       "</b><br> Median Income Change from 2010: <b>", percent(inc_change, accuracy = 0.1), "</b>")
+    )
+```
+:::
+
+::: {.column width="4%"}
+
+:::
+:::
+:::

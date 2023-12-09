@@ -1,0 +1,14 @@
+---
+title: "EPPS 6302: Assignment 1"
+subtitle: "Qualtrics"
+format: 
+  html:
+    code-fold: true
+    toc-depth: 2
+---
+
+Touching Qualtrics was like when a League of Legends player touches grass for the first time.
+
+> Ah, I see. Thank you very much. I would like nothing else but to never touch Qualtrics again.
+
+If you would like proof that I have and will continue to process Qualtrics data (without touching Qualtrics itself) feel free to examine [this web report](https://childpovertyactionlab.github.io/rapid-survey-report/) that I hand-reared.

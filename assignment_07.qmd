@@ -1,0 +1,8 @@
+---
+title: "EPPS 6302: Assignment 7"
+description-title: "Parallelization"
+format: 
+  html:
+    code-fold: true
+    toc-depth: 2
+---
